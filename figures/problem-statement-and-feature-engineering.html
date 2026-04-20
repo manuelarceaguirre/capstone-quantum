@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BMO Capstone — Problem Statement & Feature Engineering</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --c-bg: #f8fafc;
+      --c-canvas: #ffffff;
+      --c-border: #cbd5e1;
+      --c-border-strong: #94a3b8;
+      --c-text-main: #0f172a;
+      --c-text-sub: #64748b;
+      --c-accent: #dc2626;
+      --font-ui: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-ui);
+      background: var(--c-bg);
+      padding: 40px 40px 80px;
+      color: var(--c-text-main);
+    }
+
+    .diagram-container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .diagram-canvas {
+      background: var(--c-canvas);
+      border: 1px solid var(--c-border);
+      padding: 32px;
+      margin-bottom: 40px;
+    }
+
+    .diagram-header {
+      border-bottom: 1px solid var(--c-border);
+      padding-bottom: 16px;
+      margin-bottom: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .diagram-title {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--c-text-main);
+      margin-bottom: 4px;
+      letter-spacing: -0.01em;
+    }
+
+    .diagram-subtitle {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--c-text-sub);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .sheet-meta {
+      text-align: right;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--c-text-sub);
+      line-height: 1.6;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Section */
+    .section {
+      margin-bottom: 28px;
+    }
+    .section:last-child { margin-bottom: 0; }
+
+    .section-title {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--c-text-sub);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--c-border);
+      margin-bottom: 12px;
+    }
+
+    /* Grid */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .grid-banner { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 16px; }
+
+    /* Component */
+    .component {
+      border: 1px solid var(--c-border);
+      padding: 14px 16px;
+      background: var(--c-canvas);
+    }
+
+    .component-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--c-text-sub);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+
+    .component-value {
+      font-family: var(--font-ui);
+      font-size: 14px;
+      color: var(--c-text-main);
+      font-weight: 500;
+      line-height: 1.5;
+    }
+
+    .component-value.mono {
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+
+    .component-sub {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--c-text-sub);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    /* List items inside components */
+    ul.bullet {
+      list-style: none;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+    ul.bullet li { position: relative; padding-left: 14px; }
+    ul.bullet li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 6px;
+      height: 1px;
+      background: var(--c-text-sub);
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      padding: 2px 6px;
+      border: 1px solid var(--c-border);
+      color: var(--c-text-sub);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-right: 4px;
+    }
+    .badge-solid {
+      background: var(--c-text-main);
+      color: var(--c-canvas);
+      border-color: var(--c-text-main);
+    }
+    .badge-accent {
+      color: var(--c-accent);
+      border-color: var(--c-accent);
+    }
+
+    /* Pipeline row (arrows) */
+    .pipeline {
+      display: grid;
+      grid-template-columns: 1fr 24px 1fr 24px 1fr 24px 1fr;
+      align-items: stretch;
+      gap: 0;
+    }
+    .pipeline .component { height: 100%; }
+    .arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--c-text-sub);
+      font-family: var(--font-mono);
+      font-size: 14px;
+    }
+
+    /* Table */
+    table.tc {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+    table.tc th, table.tc td {
+      border: 1px solid var(--c-border);
+      padding: 8px 10px;
+      text-align: left;
+      color: var(--c-text-main);
+    }
+    table.tc th {
+      background: #f1f5f9;
+      font-weight: 600;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--c-text-sub);
+    }
+
+    /* Draft banner */
+    .banner {
+      border: 1px dashed var(--c-accent);
+      background: #fef2f2;
+      padding: 10px 14px;
+      margin-bottom: 24px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--c-accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Mermaid container */
+    .mermaid-wrap {
+      border: 1px solid var(--c-border);
+      background: #fafbfc;
+      padding: 24px;
+      overflow-x: auto;
+    }
+    .mermaid { font-family: var(--font-ui) !important; }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      gap: 24px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--c-text-sub);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 10px 0 0;
+    }
+    .legend .swatch {
+      display: inline-block;
+      width: 14px;
+      height: 10px;
+      border: 1px solid var(--c-border);
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    @media print {
+      body { padding: 0; background: #fff; }
+      .page-break { page-break-before: always; }
+      .diagram-canvas { border: 1px solid var(--c-border); page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+<div class="diagram-container">
+
+<!-- ======================== PAGE 1 ======================== -->
+<div class="diagram-canvas">
+  <div class="diagram-header">
+    <div>
+      <div class="diagram-title">Predicting Macroeconomic Indicators with Classical &amp; Quantum-Enhanced Models</div>
+      <div class="diagram-subtitle">Capstone Problem Statement · Sheet 01 of 02</div>
+    </div>
+    <div class="sheet-meta">
+      Sponsor · Bank of Montreal<br>
+      Revision · 2026-04-19<br>
+      Program · UChicago MS-ADS Spring 2026
+    </div>
+  </div>
+
+  <!-- Top banner: client + objective + horizon -->
+  <div class="section">
+    <div class="grid-banner">
+      <div class="component">
+        <div class="component-label">Client</div>
+        <div class="component-value">Bank of Montreal (BMO)</div>
+        <div class="component-sub">$1.5T AUM · 208 yrs · 7th-largest NA bank<br>IBM Quantum Network member (2025)<br>Institute for Applied AI &amp; Quantum</div>
+      </div>
+      <div class="component">
+        <div class="component-label">Sponsor Contact</div>
+        <div class="component-value mono">R. Padbury</div>
+        <div class="component-sub">Director, Research &amp; Ecosystems<br>Guzmán Calleja · Mgr, Quantum Tech<br>Rafael Martin-Cuevas · Sr Mgr, QT</div>
+      </div>
+      <div class="component">
+        <div class="component-label">Timeline</div>
+        <div class="component-value mono">Mar 2026 → Dec 2026</div>
+        <div class="component-sub">Autumn track · Showcase 2026-12-05<br>Two-quarter capstone with summer break</div>
+      </div>
+      <div class="component">
+        <div class="component-label">Compliance</div>
+        <div class="component-value">No NDA · Public data</div>
+        <div class="component-sub">FRED · BLS · NBER<br>No BMO proprietary data</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Business problem -->
+  <div class="section">
+    <div class="section-title">01 · Business Opportunity</div>
+    <div class="grid-2">
+      <div class="component">
+        <div class="component-label">Problem</div>
+        <div class="component-value" style="margin-bottom: 8px;">
+          Macroeconomic forecasts drive portfolio allocation, risk management, and recession
+          preparedness across BMO Wealth Management and Capital Markets.
+        </div>
+        <div class="component-sub">
+          Classical models have known ceilings on real and nominal indicators (Konduri &amp; Li 2024).
+          Emerging quantum-enhanced methods may raise accuracy or reduce data / model complexity,
+          creating a first-mover advantage if adopted early.
+        </div>
+      </div>
+      <div class="component">
+        <div class="component-label">Core Question</div>
+        <div class="component-value" style="margin-bottom: 8px;">
+          If and when can Quantum Reservoir Computing (QRC) and Quantum Signature Kernels (QSK)
+          match or beat the classical state-of-the-art for U.S. macro forecasting?
+        </div>
+        <div class="component-sub">
+          Deliverable is an assessment of near-term viability plus a recommendation
+          on the long-term roadmap for QRC / QSK adoption.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Goals + Pipeline -->
+  <div class="section">
+    <div class="section-title">02 · Goals of Analysis</div>
+    <div class="pipeline">
+      <div class="component">
+        <div class="component-label">Forecast Targets</div>
+        <ul class="bullet">
+          <li>INDPRO · Industrial Production</li>
+          <li>PAYEMS · Total Nonfarm Employment</li>
+          <li>CPIAUCSL · Consumer Price Index</li>
+          <li>S&amp;P 500 · Equity Market</li>
+          <li>USREC · NBER Recession (classifier)</li>
+        </ul>
+      </div>
+      <div class="arrow">→</div>
+      <div class="component">
+        <div class="component-label">Three Models Required</div>
+        <ul class="bullet">
+          <li>Classical Baseline<br><span class="badge">benchmark</span></li>
+          <li>Quantum Reservoir Computing<br><span class="badge">QRC · VQC reservoir</span></li>
+          <li>Quantum Signature Kernel<br><span class="badge">QSK · classifier</span></li>
+        </ul>
+      </div>
+      <div class="arrow">→</div>
+      <div class="component">
+        <div class="component-label">Evaluation Criteria</div>
+        <ul class="bullet">
+          <li>Prediction accuracy (RMSE, MAE, AUC)</li>
+          <li>Robustness across indicators</li>
+          <li>Computational cost / resource use</li>
+          <li>Pseudo out-of-sample expanding window<br>(Konduri &amp; Li 2024 protocol)</li>
+        </ul>
+      </div>
+      <div class="arrow">→</div>
+      <div class="component">
+        <div class="component-label">Final Deliverables</div>
+        <ul class="bullet">
+          <li>Research paper</li>
+          <li>Showcase presentation (2026-12-05)</li>
+          <li>All code &amp; trained models</li>
+          <li>Adoption recommendation for BMO</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data sources summary -->
+  <div class="section">
+    <div class="section-title">03 · Data Sources</div>
+    <div class="grid-3">
+      <div class="component">
+        <div class="component-label">Primary · FRED-MD</div>
+        <div class="component-value mono">2026-03-MD.csv</div>
+        <div class="component-sub">
+          McCracken &amp; Ng (2016)<br>
+          126 macro variables × 806 months<br>
+          1959-01 → 2026-02 · monthly<br>
+          Row 2 = stationarization codes
+        </div>
+      </div>
+      <div class="component">
+        <div class="component-label">Secondary · NBER</div>
+        <div class="component-value mono">USREC indicator</div>
+        <div class="component-sub">
+          Official U.S. business cycle chronology<br>
+          Binary recession label (peak/trough)<br>
+          Target for classification models
+        </div>
+      </div>
+      <div class="component">
+        <div class="component-label">Ad-hoc · FRED API</div>
+        <div class="component-value mono">UNRATE, T10Y3M, …</div>
+        <div class="component-sub">
+          Individual series (e.g., unemployment,<br>
+          yield-curve spread) pulled as needed<br>
+          for feature augmentation
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stack + Team -->
+  <div class="section">
+    <div class="grid-2">
+      <div>
+        <div class="section-title">04 · Technology Stack</div>
+        <div class="grid-2">
+          <div class="component">
+            <div class="component-label">Classical</div>
+            <div class="component-value mono">Python · Jupyter</div>
+            <div class="component-sub">pandas · numpy · scikit-learn<br>Anaconda environment</div>
+          </div>
+          <div class="component">
+            <div class="component-label">Quantum</div>
+            <div class="component-value mono">Qiskit (IBM)</div>
+            <div class="component-sub">Qiskit Aer · local simulation<br>IBM Quantum processors via BMO</div>
+          </div>
+          <div class="component">
+            <div class="component-label">Compute</div>
+            <div class="component-value mono">Local → IBM QPU</div>
+            <div class="component-sub">Local dev for iteration<br>QPU for final experiments</div>
+          </div>
+          <div class="component">
+            <div class="component-label">Collaboration</div>
+            <div class="component-value mono">GitHub</div>
+            <div class="component-sub">Version control<br>Shared code + notebooks</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="section-title">05 · Team · Task Assignments</div>
+        <table class="tc">
+          <thead>
+            <tr><th>Member</th><th>CNet</th><th>Owns</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Jack Morgan</td><td>jhmorgan</td><td>Proposal · Lit Review</td></tr>
+            <tr><td>David Giger</td><td>digger</td><td>Bank &amp; quantum context</td></tr>
+            <tr><td>Manuel Arce Aguirre</td><td>arceaguirrem</td><td>Flowchart · Data &amp; Sampling · Baseline</td></tr>
+            <tr><td>Zihang (William) Niu</td><td>william03niu</td><td>Feature Selection &amp; Engineering</td></tr>
+          </tbody>
+        </table>
+        <div class="component-sub" style="margin-top: 10px;">
+          All members · full-time, in-person · UChicago MS-ADS
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Open questions from kickoff -->
+  <div class="section">
+    <div class="section-title">06 · Open Questions from Project Kickoff</div>
+    <div class="grid-4">
+      <div class="component">
+        <div class="component-label">Scope</div>
+        <ul class="bullet">
+          <li>Number of features?</li>
+          <li>Same dataset across all models or per-model?</li>
+        </ul>
+      </div>
+      <div class="component">
+        <div class="component-label">Quantum</div>
+        <ul class="bullet">
+          <li>QSK feature map &amp; operators</li>
+          <li>QRNN variant for QRC</li>
+          <li>Processor type / size</li>
+        </ul>
+      </div>
+      <div class="component">
+        <div class="component-label">Operations</div>
+        <ul class="bullet">
+          <li>Meeting cadence</li>
+          <li>IBM API key distribution</li>
+          <li>BMO-side deliverables</li>
+        </ul>
+      </div>
+      <div class="component">
+        <div class="component-label">Evaluation</div>
+        <ul class="bullet">
+          <li>Pros/cons of Konduri-Li pseudo-OOS</li>
+          <li>Classification vs. regression priority</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== PAGE 2 ======================== -->
+<div class="diagram-canvas page-break">
+  <div class="diagram-header">
+    <div>
+      <div class="diagram-title">Feature Engineering Pipeline · Proposed</div>
+      <div class="diagram-subtitle">Data Flow · Sheet 02 of 02 · Owner: William Niu</div>
+    </div>
+    <div class="sheet-meta">
+      Source · FRED-MD 2026-03 + NBER<br>
+      Protocol · Konduri &amp; Li 2024<br>
+      Status · Draft / Placeholder
+    </div>
+  </div>
+
+  <div class="banner">
+    <span>⚠ Draft · Not Yet Validated by William</span>
+    <span>Placeholder based on FRED-MD conventions + Konduri-Li 2024</span>
+  </div>
+
+  <!-- Mermaid diagram -->
+  <div class="section">
+    <div class="section-title">Feature Engineering Flow</div>
+    <div class="mermaid-wrap">
+<div class="mermaid">
+flowchart TD
+    %% ---------- Sources ----------
+    S1["FRED-MD<br/><b>2026-03-MD.csv</b><br/>126 vars × 806 months"]:::src
+    S2["NBER<br/><b>USREC</b><br/>Recession chronology"]:::src
+    S3["FRED API<br/>ad-hoc series<br/>UNRATE · T10Y3M · …"]:::srcOpt
+
+    %% ---------- Ingest ----------
+    I1["Ingestion<br/><i>parse sasdate · index monthly</i>"]:::step
+    I2["Extract row 2<br/><b>transform codes</b>"]:::step
+
+    S1 --> I1
+    S2 --> I1
+    S3 -.-> I1
+    I1 --> I2
+
+    %% ---------- Cleaning ----------
+    C1["Cleaning"]:::step
+    I2 --> C1
+    C1 --> C1a["Drop series<br/>with &gt; 10% missing"]:::leaf
+    C1 --> C1b["Forward-fill<br/>publication-lag tail"]:::leaf
+    C1 --> C1c["Winsorize outliers<br/>1% / 99%"]:::leaf
+
+    %% ---------- Stationarization ----------
+    T["Stationarization<br/><i>apply FRED-MD transform codes</i>"]:::stepHi
+    C1a --> T
+    C1b --> T
+    C1c --> T
+
+    T --> T1["<b>tcode 1</b> · x_t · levels"]:::leaf
+    T --> T2["<b>tcode 2</b> · Δx_t · 1st diff"]:::leaf
+    T --> T3["<b>tcode 4</b> · log x_t"]:::leaf
+    T --> T4["<b>tcode 5</b> · Δ log x_t · growth"]:::leaf
+    T --> T5["<b>tcode 6</b> · Δ² log x_t"]:::leaf
+    T --> T6["<b>tcode 7</b> · Δ(xₜ / xₜ₋₁ − 1)"]:::leaf
+
+    %% ---------- Feature Selection Tracks ----------
+    FS["Feature Selection<br/><i>parallel tracks · compared downstream</i>"]:::stepHi
+    T1 --> FS
+    T2 --> FS
+    T3 --> FS
+    T4 --> FS
+    T5 --> FS
+    T6 --> FS
+
+    FS --> A["<b>Track A</b> · Full 126<br/>kitchen-sink"]:::track
+    FS --> B["<b>Track B</b> · Curated 8<br/>USREC · T10Y3M · UNRATE · PMI<br/>UMCSENT · SP500_ret · PERMIT · LEI_chg"]:::track
+    FS --> C["<b>Track C</b> · LASSO<br/>data-driven sparse"]:::track
+    FS --> D["<b>Track D</b> · PCA factors<br/>McCracken-Ng ~8 factors"]:::track
+    FS --> E["<b>Track E</b> · Konduri-Li subset<br/>methodology replication"]:::track
+
+    %% ---------- Augmentation ----------
+    AUG["Feature Augmentation"]:::step
+    A --> AUG
+    B --> AUG
+    C --> AUG
+    D --> AUG
+    E --> AUG
+
+    AUG --> AUG1["Lags · t−1, t−3, t−6, t−12"]:::leaf
+    AUG --> AUG2["Rolling μ / σ · 3, 6, 12 mo"]:::leaf
+    AUG --> AUG3["YoY Δ · seasonal terms"]:::leaf
+    AUG --> AUG4["Merge USREC · h-month ahead"]:::leaf
+
+    %% ---------- Split ----------
+    SP["Pseudo Out-of-Sample<br/><b>expanding window</b><br/>Konduri-Li 2024"]:::stepHi
+    AUG1 --> SP
+    AUG2 --> SP
+    AUG3 --> SP
+    AUG4 --> SP
+
+    %% ---------- Model Inputs ----------
+    SP --> M1["<b>Classical Baseline</b><br/>AR · RW · ElasticNet<br/>Random Forest · XGBoost"]:::model
+    SP --> M2["<b>QRC Input</b><br/>feature vector xₜ<br/>→ VQC reservoir → readout"]:::model
+    SP --> M3["<b>QSK Input</b><br/>path signatures<br/>→ quantum feature map"]:::model
+
+    %% ---------- Targets ----------
+    M1 --> TG1["<b>Regression</b><br/>INDPRO · PAYEMS<br/>CPIAUCSL · S&amp;P 500"]:::target
+    M2 --> TG1
+    M3 --> TG1
+    M1 --> TG2["<b>Classification</b><br/>USREC · h = 1, 3, 6, 12"]:::target
+    M2 --> TG2
+    M3 --> TG2
+
+    %% ---------- Styling ----------
+    classDef src fill:#ffffff,stroke:#0f172a,stroke-width:1.5px,color:#0f172a;
+    classDef srcOpt fill:#ffffff,stroke:#94a3b8,stroke-width:1px,stroke-dasharray:4 4,color:#64748b;
+    classDef step fill:#f8fafc,stroke:#cbd5e1,stroke-width:1px,color:#0f172a;
+    classDef stepHi fill:#f1f5f9,stroke:#0f172a,stroke-width:1.5px,color:#0f172a;
+    classDef leaf fill:#ffffff,stroke:#cbd5e1,stroke-width:1px,color:#334155;
+    classDef track fill:#fef9c3,stroke:#a16207,stroke-width:1px,color:#0f172a;
+    classDef model fill:#ecfeff,stroke:#0e7490,stroke-width:1.5px,color:#0f172a;
+    classDef target fill:#0f172a,stroke:#0f172a,color:#ffffff;
+</div>
+    </div>
+    <div class="legend">
+      <span><span class="swatch" style="background:#ffffff; border-color:#0f172a;"></span>Data source (solid)</span>
+      <span><span class="swatch" style="background:#ffffff; border-style:dashed;"></span>Optional source</span>
+      <span><span class="swatch" style="background:#f1f5f9; border-color:#0f172a;"></span>Key transform</span>
+      <span><span class="swatch" style="background:#fef9c3; border-color:#a16207;"></span>FS track (parallel)</span>
+      <span><span class="swatch" style="background:#ecfeff; border-color:#0e7490;"></span>Model input</span>
+      <span><span class="swatch" style="background:#0f172a; border-color:#0f172a;"></span>Target</span>
+    </div>
+  </div>
+
+  <!-- Transform code reference -->
+  <div class="section">
+    <div class="section-title">Appendix A · FRED-MD Transformation Codes (Row 2 of CSV)</div>
+    <table class="tc">
+      <thead>
+        <tr><th>tcode</th><th>Transformation</th><th>Formula</th><th>Typical Series</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>No transformation</td><td>x<sub>t</sub></td><td>UNRATE, FEDFUNDS, GS10 · rates</td></tr>
+        <tr><td>2</td><td>First difference</td><td>Δx<sub>t</sub> = x<sub>t</sub> − x<sub>t−1</sub></td><td>Yield spreads, some rates</td></tr>
+        <tr><td>3</td><td>Second difference</td><td>Δ²x<sub>t</sub></td><td>Rarely used</td></tr>
+        <tr><td>4</td><td>Natural log</td><td>log(x<sub>t</sub>)</td><td>Some price/asset levels</td></tr>
+        <tr><td>5</td><td>Log first difference</td><td>Δ log(x<sub>t</sub>) · growth rate</td><td>RPI, INDPRO, PAYEMS, RETAILx</td></tr>
+        <tr><td>6</td><td>Log second difference</td><td>Δ² log(x<sub>t</sub>)</td><td>CPIAUCSL, PCEPI, money supply</td></tr>
+        <tr><td>7</td><td>Ratio-style diff</td><td>Δ(x<sub>t</sub>/x<sub>t−1</sub> − 1)</td><td>Few series (e.g., VIXCLSx)</td></tr>
+      </tbody>
+    </table>
+    <div class="component-sub" style="margin-top: 10px;">
+      Codes are read from row 2 of <span style="font-family: var(--font-mono);">2026-03-MD.csv</span> and applied column-by-column before any modeling.
+      All series are stationary after transformation (McCracken &amp; Ng 2016).
+    </div>
+  </div>
+
+  <!-- Track comparison -->
+  <div class="section">
+    <div class="section-title">Appendix B · Feature Selection Tracks · Trade-offs</div>
+    <table class="tc">
+      <thead>
+        <tr><th>Track</th><th>Feature Set</th><th>Pro</th><th>Con</th><th>Best For</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>A · Full</td><td>All 126 FRED-MD vars + augmentation</td>
+          <td>Maximum information, no a-priori bias</td>
+          <td>Curse of dimensionality; overfit risk; QPU cost</td>
+          <td>ML baselines (RF, boosted)</td>
+        </tr>
+        <tr>
+          <td>B · Curated 8</td><td>Sponsor's leading-indicator sample</td>
+          <td>Matches sponsor's implicit expectation; interpretable</td>
+          <td>Small; may miss regime-specific signals</td>
+          <td>QRC / QSK proof-of-concept</td>
+        </tr>
+        <tr>
+          <td>C · LASSO</td><td>Data-driven sparse subset</td>
+          <td>Adaptive; principled regularization</td>
+          <td>Unstable across windows; selection bias in time series</td>
+          <td>Linear baseline for Konduri-Li replication</td>
+        </tr>
+        <tr>
+          <td>D · PCA factors</td><td>~8 principal components (static or DFM)</td>
+          <td>Canonical FRED-MD approach; low-dim input for quantum</td>
+          <td>Factors lose interpretability</td>
+          <td>QRC input (dimension matches qubit budget)</td>
+        </tr>
+        <tr>
+          <td>E · Konduri-Li</td><td>Subset used in 2024 JMP</td>
+          <td>Direct comparability to the paper we replicate</td>
+          <td>Fixed to prior author's choices</td>
+          <td>Classical benchmark table</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Outstanding design decisions -->
+  <div class="section">
+    <div class="section-title">Appendix C · Outstanding Feature-Engineering Decisions for William</div>
+    <div class="grid-3">
+      <div class="component">
+        <div class="component-label">Scope</div>
+        <ul class="bullet">
+          <li>Which tracks (A–E) do we ship?</li>
+          <li>Lag horizon set · 1/3/6/12 or richer?</li>
+          <li>Include sentiment / alt data?</li>
+        </ul>
+      </div>
+      <div class="component">
+        <div class="component-label">Quantum-Aware</div>
+        <ul class="bullet">
+          <li>Feature dim vs. qubit budget</li>
+          <li>Encoding — amplitude · angle · Chebyshev?</li>
+          <li>Normalization range for QSK kernel</li>
+        </ul>
+      </div>
+      <div class="component">
+        <div class="component-label">Validation</div>
+        <ul class="bullet">
+          <li>Expanding vs. rolling window length</li>
+          <li>Recession-period holdouts (2008, 2020)</li>
+          <li>Leakage audit on USREC lag alignment</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#ffffff',
+      primaryTextColor: '#0f172a',
+      primaryBorderColor: '#cbd5e1',
+      lineColor: '#64748b',
+      secondaryColor: '#f8fafc',
+      tertiaryColor: '#ffffff',
+      fontFamily: 'Inter, sans-serif',
+      fontSize: '13px'
+    },
+    flowchart: {
+      curve: 'linear',
+      htmlLabels: true,
+      nodeSpacing: 40,
+      rankSpacing: 55
+    }
+  });
+</script>
+</body>
+</html>

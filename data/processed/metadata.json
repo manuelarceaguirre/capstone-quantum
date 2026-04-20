@@ -1,0 +1,116 @@
+{
+  "vintage": "2026-03-MD.csv",
+  "input_sha256": "630110f3e4ab8a0555453621b829b44dcb6e8694ce10ca9061673f1d123ec205",
+  "generated": "2026-04-20T14:35:04.005544+00:00",
+  "usrec_source": "FRED (online)",
+  "config": {
+    "max_missing_pct": 0.25,
+    "earliest_start": "1965-01-01",
+    "ffill_tail_rows": 2,
+    "interp_limit": 3,
+    "winsorize": false,
+    "reg_targets": [
+      "INDPRO",
+      "PAYEMS",
+      "CPIAUCSL",
+      "S&P 500"
+    ],
+    "horizons": [
+      1,
+      3,
+      6,
+      12
+    ],
+    "initial_train_years": 20,
+    "test_years_per_fold": 5,
+    "fold_step_months": 12,
+    "qsk_window_months": 24,
+    "pca_mini_components": 15,
+    "seed": 42
+  },
+  "dropped_series": [
+    "ACOGNO",
+    "ANDENOx",
+    "TWEXAFEGSMTHx"
+  ],
+  "n_series_retained": 123,
+  "stationary_range": [
+    "1962-04-01",
+    "2026-02-01"
+  ],
+  "adf_failures": [
+    "HOUSTMW",
+    "HOUSTNE",
+    "PERMITMW"
+  ],
+  "zero_positive_folds": 15,
+  "package_versions": {
+    "pandas": "2.3.3",
+    "numpy": "2.4.0",
+    "sklearn": "1.8.0"
+  },
+  "artifacts": {
+    "track_A_full.parquet": {
+      "shape": [
+        767,
+        123
+      ],
+      "desc": "Full stationary panel (ready to use)"
+    },
+    "track_B_curated.parquet": {
+      "shape": [
+        767,
+        6
+      ],
+      "desc": "Curated leading indicators incl. T10Y3M level"
+    },
+    "stationary_panel.parquet": {
+      "shape": [
+        767,
+        123
+      ],
+      "desc": "Input to Track C/D pipelines (stationarized)"
+    },
+    "levels_panel.parquet": {
+      "shape": [
+        806,
+        123
+      ],
+      "desc": "Post-clean PRE-stationarization levels"
+    },
+    "targets.parquet": {
+      "shape": [
+        806,
+        20
+      ],
+      "desc": "16 regression + 4 classification targets"
+    },
+    "usrec.parquet": {
+      "shape": [
+        806,
+        1
+      ],
+      "desc": "NBER USREC monthly 0/1 indicator"
+    },
+    "qsk_paths_track_B.npz": {
+      "shape": [
+        743,
+        24,
+        7
+      ],
+      "desc": "QSK path tensor from Track B, window=24, time-augmented"
+    },
+    "track_C_pipe.pkl": {
+      "desc": "Unfitted Pipeline: Scaler\u2192SelectFromModel(LassoCV). Fit per fold."
+    },
+    "track_D_pipe.pkl": {
+      "desc": "Unfitted Pipeline: Scaler\u2192PCA(0.80). Fit per fold."
+    },
+    "track_D_mini_pipe.pkl": {
+      "desc": "Unfitted Pipeline: Scaler\u2192PCA(15). Fit per fold."
+    },
+    "folds.json": {
+      "desc": "39 expanding-window folds with date ranges"
+    }
+  }
+}

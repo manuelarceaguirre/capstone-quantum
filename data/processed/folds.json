@@ -1,0 +1,316 @@
+{
+  "shared": [
+    {
+      "train_start": "1962-04-01",
+      "train_end": "1982-03-01",
+      "n_train": 240,
+      "test_start": "1982-04-01",
+      "test_end": "1987-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "1983-03-01",
+      "n_train": 252,
+      "test_start": "1983-04-01",
+      "test_end": "1988-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "1984-03-01",
+      "n_train": 264,
+      "test_start": "1984-04-01",
+      "test_end": "1989-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "1985-03-01",
+      "n_train": 276,
+      "test_start": "1985-04-01",
+      "test_end": "1990-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "1986-03-01",
+      "n_train": 288,
+      "test_start": "1986-04-01",
+      "test_end": "1991-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "1987-03-01",
+      "n_train": 300,
+      "test_start": "1987-04-01",
+      "test_end": "1992-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "1988-03-01",
+      "n_train": 312,
+      "test_start": "1988-04-01",
+      "test_end": "1993-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "1989-03-01",
+      "n_train": 324,
+      "test_start": "1989-04-01",
+      "test_end": "1994-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "1990-03-01",
+      "n_train": 336,
+      "test_start": "1990-04-01",
+      "test_end": "1995-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "1991-03-01",
+      "n_train": 348,
+      "test_start": "1991-04-01",
+      "test_end": "1996-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "1992-03-01",
+      "n_train": 360,
+      "test_start": "1992-04-01",
+      "test_end": "1997-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "1993-03-01",
+      "n_train": 372,
+      "test_start": "1993-04-01",
+      "test_end": "1998-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "1994-03-01",
+      "n_train": 384,
+      "test_start": "1994-04-01",
+      "test_end": "1999-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "1995-03-01",
+      "n_train": 396,
+      "test_start": "1995-04-01",
+      "test_end": "2000-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "1996-03-01",
+      "n_train": 408,
+      "test_start": "1996-04-01",
+      "test_end": "2001-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "1997-03-01",
+      "n_train": 420,
+      "test_start": "1997-04-01",
+      "test_end": "2002-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "1998-03-01",
+      "n_train": 432,
+      "test_start": "1998-04-01",
+      "test_end": "2003-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "1999-03-01",
+      "n_train": 444,
+      "test_start": "1999-04-01",
+      "test_end": "2004-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "2000-03-01",
+      "n_train": 456,
+      "test_start": "2000-04-01",
+      "test_end": "2005-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "2001-03-01",
+      "n_train": 468,
+      "test_start": "2001-04-01",
+      "test_end": "2006-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "2002-03-01",
+      "n_train": 480,
+      "test_start": "2002-04-01",
+      "test_end": "2007-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "2003-03-01",
+      "n_train": 492,
+      "test_start": "2003-04-01",
+      "test_end": "2008-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "2004-03-01",
+      "n_train": 504,
+      "test_start": "2004-04-01",
+      "test_end": "2009-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "2005-03-01",
+      "n_train": 516,
+      "test_start": "2005-04-01",
+      "test_end": "2010-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "2006-03-01",
+      "n_train": 528,
+      "test_start": "2006-04-01",
+      "test_end": "2011-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "2007-03-01",
+      "n_train": 540,
+      "test_start": "2007-04-01",
+      "test_end": "2012-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "2008-03-01",
+      "n_train": 552,
+      "test_start": "2008-04-01",
+      "test_end": "2013-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "2009-03-01",
+      "n_train": 564,
+      "test_start": "2009-04-01",
+      "test_end": "2014-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "2010-03-01",
+      "n_train": 576,
+      "test_start": "2010-04-01",
+      "test_end": "2015-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "2011-03-01",
+      "n_train": 588,
+      "test_start": "2011-04-01",
+      "test_end": "2016-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "2012-03-01",
+      "n_train": 600,
+      "test_start": "2012-04-01",
+      "test_end": "2017-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "2013-03-01",
+      "n_train": 612,
+      "test_start": "2013-04-01",
+      "test_end": "2018-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "2014-03-01",
+      "n_train": 624,
+      "test_start": "2014-04-01",
+      "test_end": "2019-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "2015-03-01",
+      "n_train": 636,
+      "test_start": "2015-04-01",
+      "test_end": "2020-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "2016-03-01",
+      "n_train": 648,
+      "test_start": "2016-04-01",
+      "test_end": "2021-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "2017-03-01",
+      "n_train": 660,
+      "test_start": "2017-04-01",
+      "test_end": "2022-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "2018-03-01",
+      "n_train": 672,
+      "test_start": "2018-04-01",
+      "test_end": "2023-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "2019-03-01",
+      "n_train": 684,
+      "test_start": "2019-04-01",
+      "test_end": "2024-03-01",
+      "n_test": 60
+    },
+    {
+      "train_start": "1962-04-01",
+      "train_end": "2020-03-01",
+      "n_train": 696,
+      "test_start": "2020-04-01",
+      "test_end": "2025-03-01",
+      "n_test": 60
+    }
+  ]
+}
