@@ -65,14 +65,16 @@ capstone-quantum/
 │   └── colab_test.ipynb         ← Jack's Drive-mount test in Colab
 ├── figures/
 │   ├── experimental_design.md   ← Jack's mermaid flowchart of the full pipeline
-│   └── problem-statement-and-feature-engineering.html ← 2-page blueprint summary
+│   ├── problem-statement-and-feature-engineering.html ← 2-page blueprint summary
+│   └── data-sampling-gaps.html  ← sampling window and data availability summary
 └── docs/
     ├── Capstone_Project_Problem_Statement_Macro_Indicators.docx ← sponsor spec
     ├── Proposal.docx
     ├── Lit Review.docx
     ├── Week 3 Presentation Outline.docx
     ├── Meeting Notes and Tasks.docx
-    └── Project Kickoff.docx
+    ├── Project Kickoff.docx
+    └── Progress Report - team specific.xlsx
 ```
 
 ## How the data pipeline works
