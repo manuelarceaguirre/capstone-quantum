@@ -1,0 +1,28 @@
+{
+  "track": "B",
+  "targets": [
+    "INDPRO",
+    "PAYEMS",
+    "CPIAUCSL",
+    "S&P 500"
+  ],
+  "horizons": [
+    1
+  ],
+  "models": [
+    "rnn",
+    "gru"
+  ],
+  "sequence_length": 24,
+  "train_window_months": 120,
+  "hidden_size": 24,
+  "num_layers": 1,
+  "dropout": 0.0,
+  "epochs": 6,
+  "patience": 6,
+  "learning_rate": 0.001,
+  "weight_decay": 0.0001,
+  "max_folds": 5,
+  "seed": 42,
+  "device": "cpu"
+}
