@@ -17,31 +17,36 @@ cells = []
 def md(text: str):
     cells.append(nbf.v4.new_markdown_cell(text.strip() + "\n"))
 
+
 def code(text: str):
     cells.append(nbf.v4.new_code_cell(text.strip() + "\n"))
 
+
 md(r"""
-# Notebook 02 · Konduri ensemble-DI baselines on our FRED-MD data
+# Notebook 02 · Konduri best classical models on our FRED-MD data
 
-**Task.** Recreate the strongest relevant models from Konduri & Li (2024) on our processed capstone data, with special attention to the paper's **ensemble machine-learning models using dimension reduction**:
+**Paper source:** Teja Konduri and Qian Li, *Forecasting Macroeconomic Variables: A Systematic Comparison of Machine Learning Methods* (July 17, 2024). PDF: <https://www.tejakonduri.com/uploads/Konduri_JMP.pdf>
 
-- Random Forest - DI
-- XGBoost - DI
-- AdaBoost - DI
-- Gradient Boost - DI
+**Task.** Recreate the paper's strongest practical classical model set on our processed capstone data, not just gradient/ensemble-DI models. Based on Konduri & Li's Table 1 model universe and Tables 2-8 results, this notebook runs the following eight model families:
 
-The notebook keeps the project substrate from `01_data_prep.ipynb` fixed so the resulting classical baseline is directly comparable with the later QRC/QSK notebooks.
+1. **ARD(6)** benchmark
+2. **Random Walk** benchmark for S&P 500 returns
+3. **AdaBoost**
+4. **AdaBoost-DI**
+5. **kNN-DI**
+6. **SVR linear-DI**
+7. **Random Forest**
+8. **XGBoost-DI**
 
-**Important methodological choice.** Konduri & Li use a 120-month rolling estimation window, monthly forecast origins, horizons `h = {1,3,6,9,12}`, annualized targets, and diffusion indices selected by Bai-Ng criteria. Our current capstone substrate uses March-2026 FRED-MD, horizons `h = {1,3,6,12}`, and shared expanding folds. This notebook therefore has two goals:
+**Why these eight?** Tables 2-6 show that real variables are often best forecast by AdaBoost, kNN with diffusion indices, SVR linear with diffusion indices, Random Forest, and XGBoost-DI. Tables 4-5/7-8 show that CPI and financial variables are hard for ML; the ARD or Random Walk baselines are themselves important winners. Therefore the fair capstone baseline is not only gradient boosting: it must include both econometric baselines and the recurrent top ML models from the paper.
 
-1. implement the same model family and leakage controls on **our data**;
-2. make every deviation from the paper explicit rather than hiding it in code.
+**Important methodological note.** This notebook applies those model families to **our data substrate** from `01_data_prep.ipynb`. It is not an exact Konduri replication: our dataset is the March-2026 FRED-MD vintage, our horizons are `{1,3,6,12}`, and our shared folds are expanding 20-year train / 5-year test blocks. Every deviation is documented so the capstone write-up can be transparent.
 """)
 
 md(r"""
-## 1 · What LiteParse extracted from the paper
+## 1 · Paper extraction with LiteParse
 
-I downloaded `Konduri_JMP.pdf` and parsed it locally with LiteParse:
+I downloaded and parsed the paper locally with LiteParse:
 
 ```bash
 curl -L https://www.tejakonduri.com/uploads/Konduri_JMP.pdf -o literature/Konduri_JMP.pdf
@@ -49,67 +54,83 @@ npx -y @llamaindex/liteparse parse literature/Konduri_JMP.pdf --no-ocr -q \
   -o literature/Konduri_JMP_liteparse.md
 ```
 
-The parsed markdown is stored at `literature/Konduri_JMP_liteparse.md`. The cells below quote the specific paper snippets that determine this notebook's model universe and evaluation design.
+The parsed markdown is stored at `literature/Konduri_JMP_liteparse.md`. The cells below quote the table/model lines used to choose the eight models in this notebook.
 """)
 
 code(r"""
 from pathlib import Path
-import re
 
 PROJECT_ROOT = Path.cwd().resolve()
 if PROJECT_ROOT.name == "notebooks":
     PROJECT_ROOT = PROJECT_ROOT.parent
 
+PAPER_URL = "https://www.tejakonduri.com/uploads/Konduri_JMP.pdf"
 PAPER_MD = PROJECT_ROOT / "literature" / "Konduri_JMP_liteparse.md"
-print(PAPER_MD)
-assert PAPER_MD.exists(), "Run LiteParse first or keep the parsed markdown in literature/."
-text = PAPER_MD.read_text()
-lines = text.splitlines()
+print("Paper URL:", PAPER_URL)
+print("LiteParse markdown:", PAPER_MD)
+assert PAPER_MD.exists(), "Expected parsed paper markdown in literature/."
+
+paper_text = PAPER_MD.read_text()
+paper_lines = paper_text.splitlines()
 
 def show_lines(start, end):
     for i in range(start, end + 1):
-        print(f"{i:4d}: {lines[i-1]}")
+        print(f"{i:4d}: {paper_lines[i-1]}")
 """)
 
 code(r"""
-# Forecast setup: POOS design, horizons, rolling window, lags.
+# Forecast design from section 2.3: rolling POOS, horizons, six lags.
 show_lines(199, 217)
 """)
 
 code(r"""
-# Model universe and the exact ensemble-DI models from Table 1.
+# Table 1: full model universe. This is where ARD/RW, AdaBoost, RF, kNN-DI, SVR-DI, and XGBoost-DI come from.
 show_lines(1073, 1104)
 """)
 
 code(r"""
-# Dimension-reduction description.
+# Section 3.4: diffusion indices are PCA factors.
 show_lines(410, 424)
 """)
 
+code(r"""
+# Table 6: best models for real variables, including Industrial Production and Employment.
+show_lines(1304, 1340)
+""")
+
+code(r"""
+# Tables 7-8: CPI and S&P 500. These motivate keeping ARD/RW baselines and AdaBoost as serious contenders.
+show_lines(1360, 1372)
+print("\n--- S&P 500 excerpt ---")
+show_lines(1416, 1428)
+""")
+
 md(r"""
-## 2 · Preprocessing audit of `01_data_prep.ipynb`
+## 2 · Preprocessing audit of the existing project substrate
 
-Before modeling, I re-read the previous notebook and the generated metadata. The main preprocessing decisions are:
+This notebook intentionally **does not redo** `01_data_prep.ipynb`; it consumes the saved artifacts so model comparisons remain consistent across the capstone.
 
-- FRED-MD March 2026 vintage, 126 raw variables, transformed using McCracken-Ng transformation codes.
-- Dropped high-missing / late-start variables: `ACOGNO`, `ANDENOx`, `TWEXAFEGSMTHx`.
-- Retained a 123-variable stationary panel from 1962-04 through 2026-02.
-- Created four feature tracks; this notebook uses the full stationary panel and refits PCA inside each training fold.
-- Current capstone targets are cumulative log growth from `t` to `t+h` for `INDPRO`, `PAYEMS`, `CPIAUCSL`, and `S&P 500`.
+Key decisions from the previous notebook:
 
-### Things to keep transparent
+- FRED-MD March 2026 vintage.
+- 126 raw variables; 123 retained after dropping `ACOGNO`, `ANDENOx`, and `TWEXAFEGSMTHx`.
+- McCracken-Ng transformations applied to create a stationary panel.
+- Shared targets: cumulative log growth for `INDPRO`, `PAYEMS`, `CPIAUCSL`, and `S&P 500` at `h = {1,3,6,12}`.
+- Shared expanding folds: 20-year initial training window, 5-year test blocks, one-year step.
 
-1. **Missing values.** The previous notebook describes interior filling as past-only, but the code also calls `bfill(limit=3)`. Back-filling can use future observations if it touches an interior missing block. I do **not** redo imputation here; I use the saved substrate, but this should be reviewed before final claims.
-2. **Konduri target scaling.** Konduri annualizes growth by multiplying by `1200/h`. Our stored targets are unannualized cumulative log growth. Relative RMSPE rankings are invariant to multiplying a target by a horizon-specific constant, but absolute RMSPEs are not directly comparable to the paper.
-3. **CPI target definition.** Konduri treats log CPI as I(2) and forecasts a transformed inflation-growth object. The capstone target currently forecasts CPI level log growth over `h`. That is a project choice, not an exact replication of Konduri's CPI target.
-4. **Fold design.** The project folds are 20-year expanding train windows with 5-year test blocks stepping annually. These test blocks overlap. To avoid over-weighting duplicated dates, this notebook keeps the **latest valid forecast for each target date** when computing headline metrics.
-5. **Horizon leakage.** For a target `y_{t+h}`, the training label for dates too close to the forecast origin would not have been observed yet in real time. This notebook purges the last `h` months of each training fold before fitting supervised models.
+### Transparency flags
+
+1. **Missing-value handling.** The previous notebook text says missing values are handled past-only, but the code also uses `bfill(limit=3)`. If this touched interior gaps, it can use future observations. I do not change the substrate here, but this should be audited before final claims.
+2. **Konduri target scaling.** Konduri annualizes targets using `1200/h`. Our stored targets are unannualized cumulative log growth. Relative RMSPE is invariant to a horizon-specific scaling, but absolute RMSPE is not directly comparable to the paper.
+3. **CPI definition.** Konduri treats log CPI as I(2). Our project target is CPI cumulative log growth over horizon `h`. This is a project target choice, not an exact CPI-target replication.
+4. **Fold design.** Konduri uses 120-month rolling windows with monthly forecast origins. Our capstone substrate uses expanding windows with overlapping 5-year test blocks. The notebook deduplicates overlapping test predictions before headline metrics.
+5. **Horizon leakage.** For target `y_{t+h}`, training labels in the last `h` months of a training fold would not be observed at the forecast origin. This notebook purges those rows before fitting supervised models.
 """)
 
 code(r"""
 import json
+import time
 import warnings
-from collections import defaultdict
 
 import numpy as np
 import pandas as pd
@@ -123,55 +144,45 @@ RESULTS_DIR.mkdir(exist_ok=True)
 
 metadata = json.loads((DATA_DIR / "metadata.json").read_text())
 print(json.dumps({k: metadata[k] for k in ["vintage", "stationary_range", "dropped_series", "adf_failures", "zero_positive_folds"]}, indent=2))
-print("\nArtifacts:")
-for name, info in metadata["artifacts"].items():
-    print(f"  {name:28s} {info.get('shape', '')}  {info.get('desc', '')}")
+print("\nArtifacts used:")
+for name in ["stationary_panel.parquet", "targets.parquet", "usrec.parquet", "folds.json"]:
+    print(f"  {name:26s} {metadata['artifacts'][name].get('shape', '')}  {metadata['artifacts'][name].get('desc', '')}")
 """)
 
 md(r"""
-## 3 · Modeling design for this notebook
+## 3 · Model design on our data
 
-### Models
+### Models and feature sets
 
-We fit the paper's four **ensemble machine-learning + diffusion-index** models:
+| Model in notebook | Paper source | Feature set here | Notes |
+|---|---|---|---|
+| `ARD(6)` | Table 1 baseline; Tables 2-4/6-7 | six lags of target's stationary series | benchmark for non-financial targets |
+| `Random Walk` | Table 1 baseline; Tables 5/8 | zero future log return | benchmark for `S&P 500` |
+| `AdaBoost` | Table 1; strong in Tables 2, 3, 5, 6, 8 | full 123-variable stationary panel with six lags | tree boosting on raw macro features |
+| `Random Forest` | Table 1; strong in Tables 3 and 6 | full 123-variable stationary panel with six lags | bagged trees on raw macro features |
+| `AdaBoost-DI` | Table 1; recurring top DI model in Tables 2-8 | PCA diffusion indices with six lags | PCA fit per fold only |
+| `kNN-DI` | Table 1; strong in Tables 2 and 6 | PCA diffusion indices with six lags | inverse-distance kNN, following the paper's kNN inverse variant |
+| `SVR linear-DI` | Table 1; very strong for employment/recession horizons | PCA diffusion indices with six lags | scaled linear SVR |
+| `XGBoost-DI` | Table 1; strong for employment/unemployment style variables | PCA diffusion indices with six lags | gradient boosted trees on PCA factors |
 
-| Notebook name | sklearn/xgboost implementation |
-|---|---|
-| `Random Forest - DI` | `RandomForestRegressor` |
-| `XGBoost - DI` | `XGBRegressor` |
-| `AdaBoost - DI` | `AdaBoostRegressor` with shallow-tree base learner |
-| `Gradient Boost - DI` | `GradientBoostingRegressor` |
+### Leakage controls
 
-### Diffusion indices
-
-Konduri uses diffusion indices from PCA. Here, for each fold:
-
-1. fit `StandardScaler` and `PCA(n_components=0.80)` on the training macro panel only;
-2. transform train and test months into PCA factors;
-3. build six lags of those factors (`lag0` through `lag5`), matching the paper's six-lag convention;
-4. fit each ensemble model separately for each target/horizon.
-
-### Baseline
-
-For relative RMSPE, we need a benchmark. We use:
-
-- `ARD(6)` for `INDPRO`, `PAYEMS`, and `CPIAUCSL`, implemented as linear regression on six lags of the target's stationary series;
-- random-walk-no-drift for `S&P 500`, equivalent to forecasting a zero future log return.
-
-### Evaluation
-
-- Headline metric: `RMSPE = sqrt(mean((prediction - actual)^2))`.
-- Relative RMSPE: model RMSPE divided by baseline RMSPE for the same target and horizon.
-- Recession subset: observations where `USREC_{t+h} = 1`, matching the paper's statement that the target observation belongs to a recession episode.
+- Full-panel lag features use only information available at time `t`: `lag0` through `lag5`.
+- PCA is fit on the training fold only, then applied to train/test months.
+- The last `h` months of each training fold are purged before fitting because their `t+h` labels would not be known.
+- Because shared 5-year test folds overlap, headline metrics keep the latest prediction for each `(model, target, horizon, date)`.
 """)
 
 code(r"""
 from sklearn.base import clone
 from sklearn.decomposition import PCA
-from sklearn.ensemble import RandomForestRegressor, AdaBoostRegressor, GradientBoostingRegressor
+from sklearn.ensemble import AdaBoostRegressor, RandomForestRegressor
 from sklearn.linear_model import LinearRegression
+from sklearn.neighbors import KNeighborsRegressor
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVR
+from sklearn.compose import TransformedTargetRegressor
 from sklearn.tree import DecisionTreeRegressor
 
 try:
@@ -184,7 +195,7 @@ except Exception as e:
 SEED = 42
 LAGS = 6
 PCA_VARIANCE = 0.80
-DEDUP_POLICY = "latest"  # because 5-year test blocks overlap
+DEDUP_POLICY = "latest"
 
 stationary = pd.read_parquet(DATA_DIR / "stationary_panel.parquet")
 targets = pd.read_parquet(DATA_DIR / "targets.parquet")
@@ -198,10 +209,10 @@ with open(DATA_DIR / "folds.json") as f:
     folds_json = json.load(f)["shared"]
 
 folds = []
-for f in folds_json:
+for i, f in enumerate(folds_json):
     train_idx = stationary.loc[f["train_start"]:f["train_end"]].index
     test_idx = stationary.loc[f["test_start"]:f["test_end"]].index
-    folds.append({**f, "train_idx": train_idx, "test_idx": test_idx})
+    folds.append({**f, "fold_id": i, "train_idx": train_idx, "test_idx": test_idx})
 
 reg_targets = ["INDPRO", "PAYEMS", "CPIAUCSL", "S&P 500"]
 horizons = [1, 3, 6, 12]
@@ -209,23 +220,15 @@ horizons = [1, 3, 6, 12]
 def target_col(series, h):
     return f"y_{series}_h{h}"
 
-print(stationary.shape, stationary.index.min(), stationary.index.max())
-print(targets.shape, targets.index.min(), targets.index.max())
-print(f"Loaded {len(folds)} shared expanding folds")
+print("stationary:", stationary.shape, stationary.index.min(), "to", stationary.index.max())
+print("targets   :", targets.shape, targets.index.min(), "to", targets.index.max())
+print(f"folds     : {len(folds)}")
 """)
 
 code(r"""
-def make_lagged(df: pd.DataFrame, lags: int, prefix: str | None = None) -> pd.DataFrame:
-    '''Return columns for lag0..lag(lags-1), where lag0 is information known at t.'''
-    out = []
-    for lag in range(lags):
-        shifted = df.shift(lag)
-        if prefix is None:
-            shifted = shifted.add_suffix(f"_lag{lag}")
-        else:
-            shifted.columns = [f"{prefix}{c}_lag{lag}" for c in shifted.columns]
-        out.append(shifted)
-    return pd.concat(out, axis=1)
+def make_lagged(df: pd.DataFrame, lags: int) -> pd.DataFrame:
+    '''Return lag0..lag(lags-1), where lag0 is information known at forecast origin t.'''
+    return pd.concat([df.shift(lag).add_suffix(f"_lag{lag}") for lag in range(lags)], axis=1)
 
 
 def rmspe(y_true, y_pred) -> float:
@@ -234,31 +237,48 @@ def rmspe(y_true, y_pred) -> float:
     return float(np.sqrt(np.mean((y_pred - y_true) ** 2)))
 
 
-def model_factories():
-    models = {
-        "Random Forest - DI": RandomForestRegressor(
+def full_model_factories():
+    '''Models selected from Konduri tables that use the full macro panel here.'''
+    return {
+        "AdaBoost": AdaBoostRegressor(
+            estimator=DecisionTreeRegressor(max_depth=3, min_samples_leaf=5, random_state=SEED),
+            n_estimators=50,
+            learning_rate=0.05,
+            random_state=SEED,
+        ),
+        "Random Forest": RandomForestRegressor(
             n_estimators=40,
             min_samples_leaf=3,
             max_features="sqrt",
             random_state=SEED,
             n_jobs=-1,
         ),
-        "AdaBoost - DI": AdaBoostRegressor(
+    }
+
+
+def di_model_factories():
+    '''Models selected from Konduri tables that use PCA diffusion-index features here.'''
+    models = {
+        "AdaBoost-DI": AdaBoostRegressor(
             estimator=DecisionTreeRegressor(max_depth=3, min_samples_leaf=5, random_state=SEED),
             n_estimators=50,
             learning_rate=0.05,
             random_state=SEED,
         ),
-        "Gradient Boost - DI": GradientBoostingRegressor(
-            n_estimators=50,
-            learning_rate=0.05,
-            max_depth=2,
-            min_samples_leaf=5,
-            random_state=SEED,
+        "kNN-DI": Pipeline([
+            ("scale", StandardScaler()),
+            ("knn", KNeighborsRegressor(n_neighbors=10, weights="distance", metric="euclidean")),
+        ]),
+        "SVR linear-DI": TransformedTargetRegressor(
+            regressor=Pipeline([
+                ("scale", StandardScaler()),
+                ("svr", SVR(kernel="linear", C=1.0, epsilon=0.05)),
+            ]),
+            transformer=StandardScaler(),
         ),
     }
     if HAS_XGB:
-        models["XGBoost - DI"] = XGBRegressor(
+        models["XGBoost-DI"] = XGBRegressor(
             n_estimators=50,
             learning_rate=0.05,
             max_depth=3,
@@ -273,121 +293,141 @@ def model_factories():
         )
     return models
 
-MODEL_NAMES = list(model_factories().keys())
-MODEL_NAMES
+MODEL_ORDER = ["ARD(6)", "Random Walk", "AdaBoost", "Random Forest", "AdaBoost-DI", "kNN-DI", "SVR linear-DI", "XGBoost-DI"]
+print("Full-panel models:", list(full_model_factories()))
+print("DI models        :", list(di_model_factories()))
+print("Eight requested model families:", MODEL_ORDER)
+""")
+
+md(r"""
+## 4 · Precompute leakage-safe fold features
+
+This step caches the feature matrices so the modeling loop does not refit PCA repeatedly for every target and horizon.
 """)
 
 code(r"""
-def fit_predict_one(series: str, h: int, fold: dict) -> list[dict]:
-    '''Fit baseline and ensemble-DI models for one target/horizon/fold.'''
-    y_name = target_col(series, h)
-    y = targets[y_name]
+X_full_lagged = make_lagged(stationary, LAGS)
 
-    train_idx = fold["train_idx"]
-    test_idx = fold["test_idx"]
-    train_end = pd.Timestamp(fold["train_end"])
-    # Purge dates whose y_{t+h} would not be known as of train_end.
-    supervised_train_idx = train_idx[train_idx <= train_end - pd.DateOffset(months=h)]
-
-    # Baseline features: ARD(6), except S&P random walk predicts zero return.
-    pred_rows = []
-    y_test = y.reindex(test_idx)
-    valid_test = y_test.notna()
-    test_eval_idx = y_test.index[valid_test]
-
-    if series == "S&P 500":
-        for dt in test_eval_idx:
-            pred_rows.append({
-                "model": "Baseline ARD/RW",
-                "target": series,
-                "h": h,
-                "fold": fold["train_end"],
-                "date": dt,
-                "y_true": float(y.loc[dt]),
-                "y_pred": 0.0,
-                "recession_target_month": int(usrec.shift(-h).reindex([dt]).iloc[0]) if dt in usrec.index else np.nan,
-            })
-    else:
-        base_signal = stationary[[series]].copy()
-        X_ard = make_lagged(base_signal, LAGS)
-        train_mask = X_ard.reindex(supervised_train_idx).notna().all(axis=1) & y.reindex(supervised_train_idx).notna()
-        test_mask = X_ard.reindex(test_eval_idx).notna().all(axis=1) & y.reindex(test_eval_idx).notna()
-        tr_idx = supervised_train_idx[train_mask.values]
-        te_idx = test_eval_idx[test_mask.values]
-        if len(tr_idx) > 10 and len(te_idx) > 0:
-            m = LinearRegression()
-            m.fit(X_ard.loc[tr_idx], y.loc[tr_idx])
-            preds = m.predict(X_ard.loc[te_idx])
-            rec = usrec.shift(-h).reindex(te_idx)
-            for dt, yp in zip(te_idx, preds):
-                pred_rows.append({
-                    "model": "Baseline ARD/RW",
-                    "target": series,
-                    "h": h,
-                    "fold": fold["train_end"],
-                    "date": dt,
-                    "y_true": float(y.loc[dt]),
-                    "y_pred": float(yp),
-                    "recession_target_month": int(rec.loc[dt]) if pd.notna(rec.loc[dt]) else np.nan,
-                })
-
-    # Diffusion-index features: fit scaler/PCA on training macro information only.
+fold_feature_cache = {}
+for fold in folds:
+    fold_id = fold["fold_id"]
     pca_pipe = Pipeline([
         ("scale", StandardScaler()),
         ("pca", PCA(n_components=PCA_VARIANCE, svd_solver="full", random_state=SEED)),
     ])
-    pca_pipe.fit(stationary.loc[train_idx])
+    pca_pipe.fit(stationary.loc[fold["train_idx"]])
     factors = pd.DataFrame(
         pca_pipe.transform(stationary),
         index=stationary.index,
         columns=[f"DI{i+1:02d}" for i in range(pca_pipe.named_steps["pca"].n_components_)],
     )
-    X_di = make_lagged(factors, LAGS)
+    fold_feature_cache[fold_id] = {
+        "X_di_lagged": make_lagged(factors, LAGS),
+        "n_di": int(pca_pipe.named_steps["pca"].n_components_),
+        "pca_var": float(pca_pipe.named_steps["pca"].explained_variance_ratio_.sum()),
+    }
 
-    train_mask = X_di.reindex(supervised_train_idx).notna().all(axis=1) & y.reindex(supervised_train_idx).notna()
-    test_mask = X_di.reindex(test_eval_idx).notna().all(axis=1) & y.reindex(test_eval_idx).notna()
-    tr_idx = supervised_train_idx[train_mask.values]
-    te_idx = test_eval_idx[test_mask.values]
-    if len(tr_idx) <= 20 or len(te_idx) == 0:
-        return pred_rows
-
-    X_train, yy_train = X_di.loc[tr_idx], y.loc[tr_idx]
-    X_test, yy_test = X_di.loc[te_idx], y.loc[te_idx]
-    rec = usrec.shift(-h).reindex(te_idx)
-
-    for name, estimator in model_factories().items():
-        model = clone(estimator)
-        model.fit(X_train, yy_train)
-        preds = model.predict(X_test)
-        for dt, yp in zip(te_idx, preds):
-            pred_rows.append({
-                "model": name,
-                "target": series,
-                "h": h,
-                "fold": fold["train_end"],
-                "date": dt,
-                "y_true": float(yy_test.loc[dt]),
-                "y_pred": float(yp),
-                "recession_target_month": int(rec.loc[dt]) if pd.notna(rec.loc[dt]) else np.nan,
-                "n_di": int(pca_pipe.named_steps["pca"].n_components_),
-                "pca_var": float(pca_pipe.named_steps["pca"].explained_variance_ratio_.sum()),
-                "n_train_supervised": int(len(tr_idx)),
-            })
-
-    return pred_rows
-""")
-
-md(r"""
-## 4 · Run the pseudo-out-of-sample exercise
-
-This can take roughly 20-30 minutes on a laptop because it fits 4 ensemble models × 4 targets × 4 horizons × 39 folds, plus baselines. The cell checkpoints after every target/horizon block, so reruns resume instead of starting over.
+pd.DataFrame([
+    {"fold_id": k, "n_di": v["n_di"], "pca_var": v["pca_var"]}
+    for k, v in fold_feature_cache.items()
+]).describe().round(3)
 """)
 
 code(r"""
-import time
+def append_prediction_rows(rows, model_name, series, h, fold, dates, y_true, y_pred, feature_set, extra=None):
+    rec = usrec.shift(-h).reindex(dates)
+    extra = extra or {}
+    for dt, yt, yp in zip(dates, y_true, y_pred):
+        rows.append({
+            "model": model_name,
+            "target": series,
+            "h": h,
+            "fold_id": fold["fold_id"],
+            "fold_train_end": fold["train_end"],
+            "date": dt,
+            "y_true": float(yt),
+            "y_pred": float(yp),
+            "feature_set": feature_set,
+            "recession_target_month": int(rec.loc[dt]) if pd.notna(rec.loc[dt]) else np.nan,
+            **extra,
+        })
 
+
+def valid_xy(X, y, idx):
+    Xb = X.reindex(idx)
+    yb = y.reindex(idx)
+    mask = Xb.notna().all(axis=1) & yb.notna()
+    good_idx = idx[mask.values]
+    return good_idx, X.loc[good_idx], y.loc[good_idx]
+
+
+def fit_predict_one(series: str, h: int, fold: dict) -> list[dict]:
+    y = targets[target_col(series, h)]
+    train_idx = fold["train_idx"]
+    test_idx = fold["test_idx"]
+    train_end = pd.Timestamp(fold["train_end"])
+    supervised_train_idx = train_idx[train_idx <= train_end - pd.DateOffset(months=h)]
+    test_eval_idx = y.reindex(test_idx).dropna().index
+    rows = []
+
+    # 1) ARD benchmark for non-financial targets.
+    if series != "S&P 500":
+        X_ard = make_lagged(stationary[[series]], LAGS)
+        tr_idx, Xtr, ytr = valid_xy(X_ard, y, supervised_train_idx)
+        te_idx, Xte, yte = valid_xy(X_ard, y, test_eval_idx)
+        if len(tr_idx) > 10 and len(te_idx) > 0:
+            model = LinearRegression()
+            model.fit(Xtr, ytr)
+            append_prediction_rows(rows, "ARD(6)", series, h, fold, te_idx, yte, model.predict(Xte), "target_lags")
+
+    # 2) Random walk benchmark for S&P 500 log returns.
+    if series == "S&P 500":
+        y_test = y.reindex(test_eval_idx).dropna()
+        append_prediction_rows(rows, "Random Walk", series, h, fold, y_test.index, y_test, np.zeros(len(y_test)), "rw_zero_return")
+
+    # 3) Full-panel ML models.
+    tr_idx, Xtr, ytr = valid_xy(X_full_lagged, y, supervised_train_idx)
+    te_idx, Xte, yte = valid_xy(X_full_lagged, y, test_eval_idx)
+    if len(tr_idx) > 20 and len(te_idx) > 0:
+        for name, estimator in full_model_factories().items():
+            model = clone(estimator)
+            model.fit(Xtr, ytr)
+            append_prediction_rows(
+                rows, name, series, h, fold, te_idx, yte, model.predict(Xte), "full_panel_lags",
+                {"n_train_supervised": int(len(tr_idx)), "n_features": int(Xtr.shape[1])},
+            )
+
+    # 4) PCA diffusion-index ML models.
+    cache = fold_feature_cache[fold["fold_id"]]
+    X_di = cache["X_di_lagged"]
+    tr_idx, Xtr, ytr = valid_xy(X_di, y, supervised_train_idx)
+    te_idx, Xte, yte = valid_xy(X_di, y, test_eval_idx)
+    if len(tr_idx) > 20 and len(te_idx) > 0:
+        for name, estimator in di_model_factories().items():
+            model = clone(estimator)
+            model.fit(Xtr, ytr)
+            append_prediction_rows(
+                rows, name, series, h, fold, te_idx, yte, model.predict(Xte), "di_pca_lags",
+                {
+                    "n_train_supervised": int(len(tr_idx)),
+                    "n_features": int(Xtr.shape[1]),
+                    "n_di": cache["n_di"],
+                    "pca_var": cache["pca_var"],
+                },
+            )
+
+    return rows
+""")
+
+md(r"""
+## 5 · Run pseudo-out-of-sample forecasts
+
+The cell checkpoints after each target/horizon block. If interrupted, rerun the notebook and it resumes from `results/konduri_best_models_predictions_raw.parquet`.
+""")
+
+code(r"""
 start = time.time()
-checkpoint = RESULTS_DIR / "konduri_ensemble_di_predictions_raw.parquet"
+checkpoint = RESULTS_DIR / "konduri_best_models_predictions_raw.parquet"
 
 if checkpoint.exists():
     preds_raw = pd.read_parquet(checkpoint)
@@ -423,10 +463,10 @@ preds_raw.head()
 """)
 
 code(r"""
-# Deduplicate overlapping test windows: keep the prediction from the latest train_end/fold for each target-date-model.
+# Deduplicate overlapping test windows: keep latest fold's prediction for each model/target/h/date.
 preds = preds_raw.copy()
-preds["fold"] = pd.to_datetime(preds["fold"])
-preds = preds.sort_values(["model", "target", "h", "date", "fold"])
+preds["fold_train_end"] = pd.to_datetime(preds["fold_train_end"])
+preds = preds.sort_values(["model", "target", "h", "date", "fold_train_end"])
 if DEDUP_POLICY == "latest":
     preds = preds.drop_duplicates(["model", "target", "h", "date"], keep="last")
 elif DEDUP_POLICY == "earliest":
@@ -434,25 +474,30 @@ elif DEDUP_POLICY == "earliest":
 else:
     raise ValueError(DEDUP_POLICY)
 
-preds.to_parquet(RESULTS_DIR / "konduri_ensemble_di_predictions.parquet", index=False)
+preds.to_parquet(RESULTS_DIR / "konduri_best_models_predictions.parquet", index=False)
 print(f"Deduplicated prediction rows: {len(preds):,}")
-print(preds.groupby(["model"]).size().sort_index())
+print(preds.groupby("model").size().reindex(MODEL_ORDER).dropna().astype(int))
 """)
 
 md(r"""
-## 5 · Results
+## 6 · Results on our data
 
-The table below reports relative RMSPE versus the ARD/RW baseline. Values below 1.00 beat the baseline.
+For relative RMSPE, the benchmark is `ARD(6)` for `INDPRO`, `PAYEMS`, and `CPIAUCSL`, and `Random Walk` for `S&P 500`. Values below 1.00 beat the relevant benchmark.
 """)
 
 code(r"""
+def benchmark_name(target):
+    return "Random Walk" if target == "S&P 500" else "ARD(6)"
+
+
 def summarize_metrics(pred_df: pd.DataFrame, recession_only: bool = False) -> pd.DataFrame:
     df = pred_df.copy()
     if recession_only:
         df = df[df["recession_target_month"] == 1]
     recs = []
     for (target, h), block in df.groupby(["target", "h"]):
-        base = block[block["model"] == "Baseline ARD/RW"]
+        bname = benchmark_name(target)
+        base = block[block["model"] == bname]
         if len(base) == 0:
             continue
         base_r = rmspe(base["y_true"], base["y_pred"])
@@ -462,63 +507,74 @@ def summarize_metrics(pred_df: pd.DataFrame, recession_only: bool = False) -> pd
                 "target": target,
                 "h": h,
                 "model": model,
+                "benchmark": bname,
                 "n": len(mb),
                 "rmspe": r,
-                "baseline_rmspe": base_r,
+                "benchmark_rmspe": base_r,
                 "relative_rmspe": r / base_r if base_r > 0 else np.nan,
             })
     return pd.DataFrame(recs).sort_values(["target", "h", "relative_rmspe"])
 
 metrics = summarize_metrics(preds, recession_only=False)
 metrics_recession = summarize_metrics(preds, recession_only=True)
-metrics.to_csv(RESULTS_DIR / "konduri_ensemble_di_metrics.csv", index=False)
-metrics_recession.to_csv(RESULTS_DIR / "konduri_ensemble_di_metrics_recession.csv", index=False)
+metrics.to_csv(RESULTS_DIR / "konduri_best_models_metrics.csv", index=False)
+metrics_recession.to_csv(RESULTS_DIR / "konduri_best_models_metrics_recession.csv", index=False)
 
 rel_table = metrics.pivot_table(index=["target", "model"], columns="h", values="relative_rmspe")
 rel_table = rel_table.reindex(columns=horizons)
-rel_table.style.format("{:.3f}").background_gradient(axis=None, cmap="RdYlGn_r", vmin=0.8, vmax=1.2)
+rel_table.style.format("{:.3f}").background_gradient(axis=None, cmap="RdYlGn_r", vmin=0.7, vmax=1.3)
 """)
 
 code(r"""
-# Best model by target/horizon.
-best = metrics[metrics["model"] != "Baseline ARD/RW"].sort_values("relative_rmspe").groupby(["target", "h"]).head(1)
+# Best non-benchmark model by target/horizon.
+benchmarks = {"ARD(6)", "Random Walk"}
+best = metrics[~metrics["model"].isin(benchmarks)].sort_values("relative_rmspe").groupby(["target", "h"]).head(1)
 best = best.sort_values(["target", "h"])
-best[["target", "h", "model", "n", "rmspe", "baseline_rmspe", "relative_rmspe"]].style.format({
+best[["target", "h", "model", "benchmark", "n", "rmspe", "benchmark_rmspe", "relative_rmspe"]].style.format({
     "rmspe": "{:.5f}",
-    "baseline_rmspe": "{:.5f}",
+    "benchmark_rmspe": "{:.5f}",
     "relative_rmspe": "{:.3f}",
 })
 """)
 
 code(r"""
-# Recession-month subset, if enough target-month recession observations exist.
+# Recession-target-month subset. Interpret cautiously because some target/horizon cells have few recession observations.
 rel_rec = metrics_recession.pivot_table(index=["target", "model"], columns="h", values="relative_rmspe")
 rel_rec = rel_rec.reindex(columns=horizons)
-rel_rec.style.format("{:.3f}").background_gradient(axis=None, cmap="RdYlGn_r", vmin=0.7, vmax=1.3)
+rel_rec.style.format("{:.3f}").background_gradient(axis=None, cmap="RdYlGn_r", vmin=0.6, vmax=1.4)
 """)
 
 code(r"""
-# Compact comparison: how often each model beats the baseline.
-beat_summary = metrics[metrics["model"] != "Baseline ARD/RW"].assign(beats_baseline=lambda d: d["relative_rmspe"] < 1)
-beat_summary.groupby("model").agg(
-    cells=("relative_rmspe", "size"),
-    beats=("beats_baseline", "sum"),
-    mean_relative_rmspe=("relative_rmspe", "mean"),
-    median_relative_rmspe=("relative_rmspe", "median"),
-).sort_values(["beats", "median_relative_rmspe"], ascending=[False, True]).style.format({
+# Compact summary across target/horizon cells where each model is applicable.
+summary = (
+    metrics[~metrics["model"].isin({"ARD(6)", "Random Walk"})]
+    .assign(beats_benchmark=lambda d: d["relative_rmspe"] < 1)
+    .groupby("model")
+    .agg(
+        cells=("relative_rmspe", "size"),
+        beats=("beats_benchmark", "sum"),
+        mean_relative_rmspe=("relative_rmspe", "mean"),
+        median_relative_rmspe=("relative_rmspe", "median"),
+        best_relative_rmspe=("relative_rmspe", "min"),
+    )
+    .sort_values(["beats", "median_relative_rmspe"], ascending=[False, True])
+)
+summary.style.format({
     "mean_relative_rmspe": "{:.3f}",
     "median_relative_rmspe": "{:.3f}",
+    "best_relative_rmspe": "{:.3f}",
 })
 """)
 
 md(r"""
-## 6 · Notes for the capstone write-up
+## 7 · Notes for the capstone write-up
 
-1. **What we recreated.** The notebook implements the paper's ensemble machine-learning models using diffusion-index PCA features: Random Forest-DI, XGBoost-DI, AdaBoost-DI, and Gradient Boost-DI.
-2. **What is not exact replication.** We use the project's March-2026 processed data, project horizons `{1,3,6,12}`, project target definitions, and project folds, rather than Konduri's 1960-2019 rolling 120-month window with `{1,3,6,9,12}`.
-3. **Leakage controls added here.** PCA is refit inside every fold; supervised training rows whose `t+h` target would not be known at the forecast origin are purged; overlapping test blocks are deduplicated before headline metrics.
-4. **Preprocessing issue to revisit.** The earlier notebook's `bfill(limit=3)` step may use future values for missing data if any back-filled gaps are interior. Before final submission, either remove it, prove it only affects leading rows that are later dropped, or document the exact affected cells.
-5. **Next modeling step.** If we want closer Konduri replication, add an alternate fold generator with 120-month rolling windows and monthly forecast origins, and rebuild the targets using the paper's annualized transformation formulas.
+1. **Paper link and table provenance.** The model list comes from Konduri & Li Table 1. The priority set is justified by Tables 2-6 for Industrial Production, Employment, and other real variables; Table 7 for CPI/nominal variables; and Table 8 for S&P 500/financial variables. Paper URL: <https://www.tejakonduri.com/uploads/Konduri_JMP.pdf>.
+2. **What we implemented.** ARD(6), Random Walk, AdaBoost, Random Forest, AdaBoost-DI, kNN-DI, SVR linear-DI, and XGBoost-DI.
+3. **What is not exact replication.** We use our March-2026 processed data, our project target definitions, horizons `{1,3,6,12}`, and our expanding folds rather than Konduri's 120-month rolling monthly POOS and horizons `{1,3,6,9,12}`.
+4. **Leakage controls.** PCA is refit inside each fold; training rows whose `t+h` label would not yet be known are purged; overlapping test-window predictions are deduplicated before headline metrics.
+5. **Preprocessing caveat.** The prior notebook's `bfill(limit=3)` should be audited. If it affects interior gaps, it introduces future information into the feature substrate.
+6. **Next step for closer replication.** Add a second evaluation mode with Konduri-style 120-month rolling windows and annualized target transformations, then compare whether model rankings are stable.
 """)
 
 nb["cells"] = cells
