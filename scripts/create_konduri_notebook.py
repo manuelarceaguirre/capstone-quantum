@@ -150,7 +150,80 @@ for name in ["stationary_panel.parquet", "targets.parquet", "usrec.parquet", "fo
 """)
 
 md(r"""
-## 3 · Model design on our data
+## 3 · Assumptions, decisions, and limitations
+
+This section is intentionally explicit. A grader should be able to tell exactly what is assumed, what comes from Konduri & Li, what comes from our previous preprocessing notebook, and what is a pragmatic capstone choice.
+
+### 3.1 Data assumptions
+
+| Area | Assumption / decision | Why it matters |
+|---|---|---|
+| Raw source | We use the March 2026 FRED-MD vintage at `data/2026-03-MD.csv`. | Konduri uses a revised FRED-MD-style panel through 2023 with added ISM/YCharts PMI series. Our exact input data are not identical. |
+| Frequency | All observations are monthly and indexed by month start. | Forecast origins, horizons, and folds are monthly. |
+| Available predictors | We use the 123 retained series from `stationary_panel.parquet`. | Konduri reports 134 monthly macro/financial series after augmenting FRED-MD. We do not have the proprietary ISM/YCharts additions in this notebook. |
+| Dropped series | `ACOGNO`, `ANDENOx`, and `TWEXAFEGSMTHx` were dropped in preprocessing because of high missingness or late starts. | This avoids truncating the sample, but means our predictor set differs from the paper. |
+| Stationarity | We trust the McCracken-Ng transformation codes applied in `01_data_prep.ipynb`. | Most macro ML comparisons assume stationary features; three retained series still failed ADF in metadata: `HOUSTMW`, `HOUSTNE`, `PERMITMW`. |
+| Missing values | We consume the preprocessed substrate as saved. We do not do additional imputation here. | The prior notebook used forward fill and also `bfill(limit=3)`. Backfill can leak future values if it hits interior gaps; this must be audited before final claims. |
+| Data revisions | We use latest-vintage data, not real-time vintages. | This is standard in many academic forecasting horse races but is not a true real-time forecasting exercise. |
+| Publication lags | We do not model release/calendar delays beyond the prior notebook's simple tail fill. | Some variables would not actually be known at the month-end forecast origin in production. |
+
+### 3.2 Target assumptions
+
+| Area | Assumption / decision | Why it matters |
+|---|---|---|
+| Regression targets | We forecast `INDPRO`, `PAYEMS`, `CPIAUCSL`, and `S&P 500`. | These match the capstone sponsor targets and the key variables in Konduri Tables 2-5. |
+| Horizon set | We evaluate `h = {1, 3, 6, 12}`. | Konduri uses `{1, 3, 6, 9, 12}`. We omit `h=9` because the existing project substrate does. |
+| Target formula | We use the existing stored targets: cumulative log growth from `t` to `t+h`. | Konduri annualizes by `1200/h`; relative RMSPE is scale-invariant by horizon, but absolute RMSPEs are not directly comparable. |
+| CPI target | We forecast CPI cumulative log growth as stored. | Konduri treats log CPI as I(2) and uses a transformation tied to inflation acceleration. Our CPI results should be described as capstone-target CPI forecasting, not exact Konduri CPI replication. |
+| S&P 500 benchmark | Random Walk predicts zero future log return. | This follows the finance convention used in the paper for financial variables. |
+| Label timing | For each fold and horizon, we purge the last `h` months of the training window. | Otherwise we would train on labels whose future outcome would not have been known at the forecast origin. |
+
+### 3.3 Fold and evaluation assumptions
+
+| Area | Assumption / decision | Why it matters |
+|---|---|---|
+| Train/test protocol | We use the shared project folds: 20-year expanding training window, 5-year test block, 12-month step. | Konduri uses 120-month rolling windows with monthly forecast origins. This notebook is a capstone-baseline recreation, not an exact replication. |
+| Overlapping tests | Because 5-year test blocks step by one year, test dates overlap across folds. We keep the latest valid forecast for each `(model, target, horizon, date)`. | Without deduplication, repeated dates would be over-weighted in RMSPE. |
+| Metric | We use RMSPE = root mean squared prediction error. | This matches the paper's point-forecast metric. |
+| Relative RMSPE | For `INDPRO`, `PAYEMS`, and `CPIAUCSL`, relative RMSPE is against `ARD(6)`. For `S&P 500`, it is against `Random Walk`. | This follows the paper's benchmark split between macro variables and financial variables. |
+| Recession subset | Recession metrics use rows where `USREC_{t+h}=1`, i.e. the target month is a recession month. | This follows the paper's interpretation that the target observation belongs to a recession episode. Small recession sample sizes mean these results are noisy. |
+| Statistical testing | We do not implement Diebold-Mariano tests in this notebook. | Konduri reports DM significance. Our current notebook ranks by RMSPE only. |
+
+### 3.4 Feature-engineering assumptions
+
+| Area | Assumption / decision | Why it matters |
+|---|---|---|
+| Lags | All supervised models use six lags, `lag0` through `lag5`. | Konduri states that all models use six lags. `lag0` is information known at forecast origin `t`. |
+| Full-panel features | `AdaBoost` and `Random Forest` use six lags of the full 123-variable stationary panel. | This gives them access to the same high-dimensional macro information as the DI models, without PCA. |
+| Diffusion indices | DI models use PCA factors explaining 80% of training-fold variance. | Konduri chooses factor counts using Bai-Ng panel criteria and selects the smallest recommended number; our 80% rule is a transparent approximation using the existing project design. |
+| PCA leakage control | StandardScaler and PCA are fit only on each fold's training months, then applied to test months. | Prevents test-window information from influencing factors. |
+| Scaling | kNN-DI and SVR linear-DI include StandardScaler after PCA-lag construction; tree models do not require scaling. | Distance/kernel methods are scale-sensitive. Tree methods are much less scale-sensitive. |
+
+### 3.5 Model and hyperparameter assumptions
+
+Hyperparameters are intentionally simple and fixed rather than tuned on test data.
+
+| Model | Implementation | Main assumptions |
+|---|---|---|
+| `ARD(6)` | `LinearRegression` on six lags of the target's stationary series | No regularization; direct h-step forecast. |
+| `Random Walk` | zero predicted log return for S&P 500 | Appropriate only for return-style financial target. |
+| `AdaBoost` | `AdaBoostRegressor` with shallow decision-tree base learner | Fixed `n_estimators=50`, `learning_rate=0.05`, `max_depth=3`. |
+| `Random Forest` | `RandomForestRegressor` | Fixed `n_estimators=40`, `min_samples_leaf=3`, `max_features='sqrt'`. |
+| `AdaBoost-DI` | same AdaBoost on PCA-lag features | PCA factors refit per fold. |
+| `kNN-DI` | `KNeighborsRegressor(n_neighbors=10, weights='distance')` | Konduri discusses `k=10` for 120-month windows; we keep `k=10` for comparability. |
+| `SVR linear-DI` | linear `SVR` in a scaled pipeline, target also scaled | Fixed `C=1.0`, `epsilon=0.05`; not tuned. |
+| `XGBoost-DI` | `XGBRegressor` | Fixed conservative tree boosting parameters; no test-set tuning. |
+
+### 3.6 Scope limitations
+
+- This notebook is for **transparent benchmark construction**, not final causal/economic interpretation.
+- We do not use real-time data vintages, publication lag calendars, or nested hyperparameter tuning.
+- We do not yet compare against quantum models; this notebook creates the classical benchmark they must beat.
+- The current result tables should be described as: **Konduri-inspired best-model set, run on our processed capstone dataset and folds**.
+""")
+
+md(r"""
+## 4 · Model design on our data
 
 ### Models and feature sets
 
