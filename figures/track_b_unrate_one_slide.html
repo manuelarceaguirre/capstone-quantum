@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Track B UNRATE Forecasts — One Slide</title>
+<style>
+  :root {
+    --ink: #0f172a;
+    --muted: #475569;
+    --line: #cbd5e1;
+    --paper: #f8fafc;
+    --card: #ffffff;
+    --blue: #1d4ed8;
+    --red: #b91c1c;
+    --green: #166534;
+    --amber: #92400e;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #e2e8f0;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--ink);
+  }
+  .slide {
+    width: 1600px;
+    height: 900px;
+    margin: 24px auto;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+    padding: 56px 64px 44px;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 28px;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 18px;
+  }
+  h1 {
+    margin: 0;
+    font-size: 46px;
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+  }
+  .subtitle {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 23px;
+  }
+  .badge {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 16px;
+    color: var(--blue);
+    border: 1.5px solid var(--blue);
+    padding: 10px 14px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  main {
+    display: grid;
+    grid-template-columns: 0.95fr 1.1fr 0.95fr;
+    gap: 24px;
+    min-height: 0;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 24px 26px;
+  }
+  h2 {
+    margin: 0 0 16px;
+    font-size: 25px;
+    letter-spacing: -0.02em;
+  }
+  ul { margin: 0; padding-left: 22px; }
+  li {
+    margin: 0 0 13px;
+    font-size: 21px;
+    line-height: 1.28;
+  }
+  .small li { font-size: 18.5px; margin-bottom: 10px; }
+  .muted { color: var(--muted); }
+  .feature {
+    display: grid;
+    grid-template-columns: 152px 1fr;
+    gap: 10px;
+    font-size: 18.5px;
+    line-height: 1.24;
+    margin-bottom: 10px;
+  }
+  .feature b { color: var(--blue); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 22px;
+  }
+  th, td {
+    padding: 13px 10px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+  }
+  th {
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+  }
+  td.num { text-align: right; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  .winner { color: var(--green); font-weight: 800; }
+  .callout {
+    margin-top: 22px;
+    padding: 18px 20px;
+    border-left: 6px solid var(--green);
+    background: #ecfdf5;
+    border-radius: 12px;
+    font-size: 22px;
+    line-height: 1.25;
+  }
+  .note {
+    padding: 14px 18px;
+    background: #fffbeb;
+    border: 1px solid #f59e0b;
+    border-radius: 14px;
+    color: var(--amber);
+    font-size: 18px;
+    line-height: 1.3;
+  }
+  footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    color: var(--muted);
+    font-size: 17px;
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+  }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+</style>
+</head>
+<body>
+  <section class="slide">
+    <header>
+      <div>
+        <h1>Track B UNRATE Forecasts: simple persistence wins</h1>
+        <div class="subtitle">2-year fixed input window · look-ahead h = 1, 3, 6 months · metric = MASE</div>
+      </div>
+      <div class="badge">Capstone baseline</div>
+    </header>
+
+    <main>
+      <div class="card">
+        <h2>Experiment setup</h2>
+        <ul>
+          <li><b>Target:</b> future <code>UNRATE_level[t+h]</code></li>
+          <li><b>Features:</b> Track B leading indicators over trailing 24 months</li>
+          <li><b>Window:</b> fixed 2-year history per forecast origin</li>
+          <li><b>Evaluation:</b> shared expanding folds; overlapping test dates deduplicated</li>
+          <li><b>Metric:</b> Mean Absolute Scaled Error; lower is better</li>
+        </ul>
+        <div class="note"><b>Caveat:</b> “2-year fixed window” here means 24-month input window, not 24-month rolling training window.</div>
+      </div>
+
+      <div class="card">
+        <h2>Results: best model by horizon</h2>
+        <table>
+          <thead>
+            <tr><th>Look-ahead</th><th>Best model</th><th>MAE</th><th>MASE</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1 month</td><td class="winner">Naive / Random Walk</td><td class="num">0.153 pp</td><td class="num">1.185</td></tr>
+            <tr><td>3 months</td><td class="winner">Naive / Random Walk</td><td class="num">0.313 pp</td><td class="num">2.424</td></tr>
+            <tr><td>6 months</td><td class="winner">ARD(6)</td><td class="num">0.486 pp</td><td class="num">3.774</td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><b>Takeaway:</b> UNRATE levels are highly persistent. In this transparent Track B setup, richer ML models do not beat simple time-series baselines.</div>
+      </div>
+
+      <div class="card">
+        <h2>Why these Track B features?</h2>
+        <div class="feature"><b>UNRATE level</b><span>current unemployment; strongest persistence signal</span></div>
+        <div class="feature"><b>UNRATE delta</b><span>recent labor-market momentum</span></div>
+        <div class="feature"><b>PERMIT</b><span>housing cycle leads labor demand</span></div>
+        <div class="feature"><b>S&amp;P 500</b><span>forward-looking market/recession expectations</span></div>
+        <div class="feature"><b>UMCSENTx</b><span>household expectations about jobs/income</span></div>
+        <div class="feature"><b>T10Y3M level</b><span>yield-curve inversion as recession signal</span></div>
+        <div class="feature"><b>T10Y3M delta</b><span>short-run change in financial conditions</span></div>
+      </div>
+    </main>
+
+    <footer>
+      <div>Source notebook: <code>notebooks/03_track_b_unrate_fixed_window_mase.ipynb</code></div>
+      <div>Result file: <code>results/track_b_unrate_24m_mase_metrics.csv</code></div>
+    </footer>
+  </section>
+</body>
+</html>
