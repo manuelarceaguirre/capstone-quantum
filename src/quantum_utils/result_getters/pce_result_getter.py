@@ -182,6 +182,7 @@ class pce_result_getter(result_getter):
 
         # Store the estimator backend or primitive.
         self.estimator = estimator
+        self.num_qubits = num_qubits
 
         # Generate Pauli feature strings used as observables.
         self.pce_strings = generate_pauli_strings(
@@ -248,13 +249,11 @@ class pce_result_getter(result_getter):
 
             estimator_pubs = []
 
-            # Transpile once
-            transpiled = transpile(pubs[0][0], self.estimator.backend())
-
             # Create one estimator job entry per observable.
-            for _, params in pubs:
+            for circ, params in pubs:
+                transpiled = transpile(pubs[0][0], self.estimator.backend())
                 for op in self.ops:
-                    estimator_pubs.append((transpiled, op, params))
+                    estimator_pubs.append((transpiled, op.apply_layout(transpiled.layout), params))
 
             # Execute all observables through the estimator.
             circuit_results = (

@@ -6,7 +6,8 @@ from .result_getters import result_getter
 def engineer_features(
     data: pd.DataFrame,
     encoding_stratetgy,
-    result_getter
+    result_getter,
+    return_circuit : bool = False
 ) -> pd.DataFrame:
     """
     Perform quantum feature engineering on classical tabular data.
@@ -61,4 +62,7 @@ def engineer_features(
 
     pubs = encoding_stratetgy.generate_pubs(data)
     results = result_getter.get_results(pubs)
-    return results
+    if return_circuit:
+        return results, pubs[0][0]
+    else:
+        return results
