@@ -1,4 +1,4 @@
-from .encoding_strategy import encoding_stratetgy
+from .encoding_strategy import encoding_strategy
 
 from qiskit import QuantumCircuit
 from qiskit_ibm_runtime import Estimator
@@ -9,7 +9,7 @@ import pandas as pd
 import numpy as np
 
 
-class su_encoding_strategy(encoding_stratetgy):
+class su_encoding_strategy(encoding_strategy):
     """
     Quantum data encoding strategy based on parameterized unitary circuits.
 
