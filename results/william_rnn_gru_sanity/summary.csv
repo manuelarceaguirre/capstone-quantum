@@ -1,3 +1,3 @@
-track,model,target,horizon,n_predictions,n_folds_used,avg_train_sequences,avg_test_sequences,mean_best_epoch,mean_val_loss,rmse,mae
-B,rnn,INDPRO,1,120,2,120.0,60.0,4.0,1.185296505689621,0.005888664485638265,0.004459796725132037
-B,gru,INDPRO,1,120,2,120.0,60.0,4.0,1.016639769077301,0.005920400287659724,0.0045023388003755825
+track,model,target,horizon,n_predictions,n_folds_used,avg_train_sequences,avg_test_sequences,mean_best_epoch,mean_val_loss,rmse,mae,mase
+B,rnn,INDPRO,1,300,5,24.0,60.0,7.6,2.5536749362945557,0.0063528770607530465,0.004988186965153242,0.8654902715259069
+B,gru,INDPRO,1,300,5,24.0,60.0,9.8,2.5231093168258667,0.0065223288507654615,0.005112873056690053,0.8871555907524408

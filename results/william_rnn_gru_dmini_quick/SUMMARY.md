@@ -3,15 +3,15 @@
 - Models: rnn, gru
 - Track: D-mini
 - Sequence length: 24
-- Fixed train window: 120 months
+- Fixed train window: 24 months
 - Tested horizons: 1
 - Folds available in substrate: 39 expanding-window folds with date ranges
 
 ## Best Rows
 
-| target | horizon | model | rmse | mae | n_predictions | mean_best_epoch |
-| --- | ---: | --- | ---: | ---: | ---: | ---: |
-| INDPRO | 1 | gru | 0.005398 | 0.004137 | 300 | 5.600000 |
+| target | horizon | model | rmse | mae | mase | n_predictions | mean_best_epoch |
+| --- | ---: | --- | ---: | ---: | ---: | ---: | ---: |
+| INDPRO | 1 | gru | 0.006905 | 0.005443 | 0.912718 | 300 | 5.000000 |
 
 ## Notes
 

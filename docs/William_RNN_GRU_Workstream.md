@@ -40,7 +40,7 @@ The default setup is:
 
 - `Track B` first, because it is low-dimensional and easy to explain
 - `sequence_length = 24` months
-- `train_window_months = 120`
+- `train_window_months = 24`
 - pooled evaluation across shared test folds
 
 This makes the recurrent lane easy to compare against:
@@ -80,32 +80,39 @@ Using the `CV_Work` environment, the formal Track B run was completed on:
 - `Track B`
 - horizons: `h=1`
 - all `39` shared folds
-- fixed train window: `120` months
+- fixed train window: `24` months
 - sequence length: `24`
 - max epochs: `30`
 - early-stopping patience: `6`
+- metrics: `RMSE`, `MAE`, and `MASE`
 
 Full pooled out-of-sample results:
 
-| Target | Best model | RMSE | MAE |
-| --- | --- | ---: | ---: |
-| `INDPRO` | `RNN` | `0.010032` | `0.005375` |
-| `PAYEMS` | `RNN` | `0.007219` | `0.001763` |
-| `CPIAUCSL` | `GRU` | `0.003004` | `0.002183` |
-| `S&P 500` | `RNN` | `0.037534` | `0.026956` |
+| Target | Best model by RMSE | RMSE | MAE | MASE |
+| --- | --- | ---: | ---: | ---: |
+| `INDPRO` | `RNN` | `0.010444` | `0.005748` | `1.067959` |
+| `PAYEMS` | `RNN` | `0.007357` | `0.002013` | `2.373001` |
+| `CPIAUCSL` | `GRU` | `0.002917` | `0.002054` | `1.185069` |
+| `S&P 500` | `RNN` | `0.038924` | `0.028287` | `0.958801` |
 
 Each row pools `2,340` predictions across the shared test windows. The result is
 useful as William's official first-pass recurrent benchmark, not as a final model
-selection claim. The most important signal is that `GRU` does not dominate the
-simpler `RNN`; it only wins on `CPIAUCSL` in this configuration.
+selection claim. MASE is computed fold by fold using the training target's naive
+one-step MAE as the denominator, then pooled over test predictions. The most
+important signal is that `GRU` does not dominate the simpler `RNN`; it only wins
+on `CPIAUCSL` by RMSE/MAE in this configuration, while `RNN` is slightly better on
+`CPIAUCSL` by MASE.
 
 ## Additional Quick Checks
 
 Before the full run, a quick first-5-fold Track B check was used to validate the
-pipeline end to end. An initial `D-mini` comparison for `INDPRO, h=1` was also run:
+pipeline end to end. An updated `D-mini` comparison for `INDPRO, h=1` was also run
+with the same 24-month training window:
 
-- `GRU`: RMSE `0.005398`, MAE `0.004137`
-- `RNN`: RMSE `0.005656`, MAE `0.004477`
+- `GRU`: RMSE `0.006905`, MAE `0.005443`
+- `RNN`: RMSE `0.007616`, MAE `0.005849`
+
+For the same D-mini check, MASE is `0.912718` for `GRU` and `0.939995` for `RNN`.
 
 These quick checks are archived as exploratory diagnostics. The full Track B run
 above should be used for group discussion.

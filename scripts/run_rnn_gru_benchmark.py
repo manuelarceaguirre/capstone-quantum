@@ -84,7 +84,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--horizons", nargs="+", type=int, default=[1], choices=ALL_HORIZONS)
     parser.add_argument("--models", nargs="+", default=["rnn", "gru"], choices=["rnn", "gru"])
     parser.add_argument("--sequence-length", type=int, default=24)
-    parser.add_argument("--train-window-months", type=int, default=120)
+    parser.add_argument("--train-window-months", type=int, default=24)
     parser.add_argument("--hidden-size", type=int, default=24)
     parser.add_argument("--num-layers", type=int, default=1)
     parser.add_argument("--dropout", type=float, default=0.0)
@@ -331,6 +331,14 @@ def fit_one_model(
     return preds.astype(np.float32), best_val, best_epoch
 
 
+def mase_denominator(y_train: np.ndarray) -> float:
+    diffs = np.abs(np.diff(y_train))
+    denom = float(np.mean(diffs)) if len(diffs) else float("nan")
+    if not np.isfinite(denom) or denom < 1e-12:
+        return float("nan")
+    return denom
+
+
 def render_markdown(
     summary_df: pd.DataFrame,
     args: argparse.Namespace,
@@ -351,14 +359,14 @@ def render_markdown(
         best_rows = (
             summary_df.sort_values(["target", "horizon", "rmse"])
             .groupby(["target", "horizon"], as_index=False)
-            .first()[["target", "horizon", "model", "rmse", "mae", "n_predictions", "mean_best_epoch"]]
+            .first()[["target", "horizon", "model", "rmse", "mae", "mase", "n_predictions", "mean_best_epoch"]]
         )
-        header = "| target | horizon | model | rmse | mae | n_predictions | mean_best_epoch |"
-        divider = "| --- | ---: | --- | ---: | ---: | ---: | ---: |"
+        header = "| target | horizon | model | rmse | mae | mase | n_predictions | mean_best_epoch |"
+        divider = "| --- | ---: | --- | ---: | ---: | ---: | ---: | ---: |"
         body = [
             (
                 f"| {row.target} | {int(row.horizon)} | {row.model} | "
-                f"{row.rmse:.6f} | {row.mae:.6f} | {int(row.n_predictions)} | "
+                f"{row.rmse:.6f} | {row.mae:.6f} | {row.mase:.6f} | {int(row.n_predictions)} | "
                 f"{row.mean_best_epoch:.6f} |"
             )
             for row in best_rows.itertuples(index=False)
@@ -410,6 +418,7 @@ def main() -> None:
                 val_losses: list[float] = []
                 n_train_samples: list[int] = []
                 n_test_samples: list[int] = []
+                scaled_abs_errors: list[float] = []
 
                 for fold_id, fold in enumerate(folds):
                     train_start, train_end = truncate_train_range(fold, args.train_window_months)
@@ -451,8 +460,17 @@ def main() -> None:
                     val_losses.append(val_loss)
                     n_train_samples.append(len(seq_data.X_train))
                     n_test_samples.append(len(seq_data.X_test))
+                    fold_mase_denominator = mase_denominator(seq_data.y_train)
 
                     for dt, truth, pred in zip(seq_data.test_dates, seq_data.y_test, preds):
+                        abs_error = abs(float(truth) - float(pred))
+                        scaled_abs_error = (
+                            abs_error / fold_mase_denominator
+                            if np.isfinite(fold_mase_denominator)
+                            else float("nan")
+                        )
+                        if np.isfinite(scaled_abs_error):
+                            scaled_abs_errors.append(scaled_abs_error)
                         prediction_rows.append(
                             {
                                 "track": args.track,
@@ -463,6 +481,9 @@ def main() -> None:
                                 "date": str(pd.Timestamp(dt).date()),
                                 "y_true": float(truth),
                                 "y_pred": float(pred),
+                                "abs_error": abs_error,
+                                "fold_naive_mae": fold_mase_denominator,
+                                "scaled_abs_error": scaled_abs_error,
                             }
                         )
 
@@ -485,11 +506,14 @@ def main() -> None:
                         "mean_val_loss": float(np.mean(val_losses)),
                         "rmse": float(np.sqrt(mean_squared_error(y_true, y_pred))),
                         "mae": float(mean_absolute_error(y_true, y_pred)),
+                        "mase": float(np.mean(scaled_abs_errors)) if scaled_abs_errors else float("nan"),
                     }
                 )
                 print(
                     f"[done] target={target_name} h={horizon} model={model_name} "
-                    f"rmse={summary_rows[-1]['rmse']:.6f} mae={summary_rows[-1]['mae']:.6f}"
+                    f"rmse={summary_rows[-1]['rmse']:.6f} "
+                    f"mae={summary_rows[-1]['mae']:.6f} "
+                    f"mase={summary_rows[-1]['mase']:.6f}"
                 )
 
     summary_df = pd.DataFrame(summary_rows).sort_values(

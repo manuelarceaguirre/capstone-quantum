@@ -14,7 +14,7 @@
     "gru"
   ],
   "sequence_length": 24,
-  "train_window_months": 120,
+  "train_window_months": 24,
   "hidden_size": 24,
   "num_layers": 1,
   "dropout": 0.0,
