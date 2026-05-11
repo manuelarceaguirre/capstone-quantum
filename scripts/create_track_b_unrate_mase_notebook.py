@@ -119,7 +119,35 @@ print("First fold:", folds[0]["train_start"], "→", folds[0]["train_end"], "/ t
 """)
 
 md(r"""
-## 3 · Build fixed 24-month window features
+## 3 · What the Track B features mean, and why they are relevant for UNRATE
+
+Track B is the small, interpretable feature set that came from the sponsor-facing leading-indicator discussion in `01_data_prep.ipynb`. For this UNRATE experiment, I use the saved Track B features plus the current unemployment-rate level.
+
+| Feature used here | What it means | Transformation / source in this project | Why it may help forecast UNRATE |
+|---|---|---|---|
+| `UNRATE_level` | Civilian unemployment rate, percent of labor force unemployed. | Pulled from `levels_panel.parquet`, not stationarized. This is the current level at forecast origin `t`. | Unemployment is highly persistent. The current level is the natural starting point for any 1-, 3-, or 6-month forecast and is what a naive/random-walk benchmark uses. |
+| `UNRATE_delta` | Month-to-month change in the unemployment rate. | This is the original Track B `UNRATE` column after McCracken-Ng transformation code 2, renamed to avoid confusion. | Captures recent labor-market momentum. Rising unemployment tends to continue during slowdowns; falling unemployment can indicate ongoing expansion. |
+| `PERMIT` | New private housing building permits. | Stationarized FRED-MD feature. In the saved Track B panel it is transformed according to the FRED-MD code rather than used as raw level. | Housing is cyclical and interest-rate sensitive. Permits often weaken before construction, employment, and broader labor demand weaken. |
+| `S&P 500` | Broad equity-market index. | Stationarized FRED-MD feature, effectively an equity return/growth measure after transformation. | Equity markets can price expected future earnings and recession risk before labor-market data deteriorate. Useful as a forward-looking financial signal. |
+| `UMCSENTx` | University of Michigan consumer sentiment index. | Stationarized FRED-MD feature. | Consumer sentiment falls when households expect weaker income/job prospects. It can lead consumption and hiring conditions. |
+| `T10Y3M_level` | 10-year Treasury yield minus 3-month Treasury bill rate, in percentage points. | Constructed in preprocessing from raw levels: `GS10 - TB3MS`. Kept as a level because inversion is a state, not a change. | Yield-curve inversions are classic recession/labor-market warning signals. A low or negative spread can precede rising unemployment. |
+| `T10Y3M_delta` | Month-to-month change in the 10-year minus 3-month yield spread. | Difference of `T10Y3M_level`. | Captures whether financial conditions are steepening or flattening recently, which may add short-run timing information beyond the level. |
+
+### Why this small feature set is defensible for UNRATE
+
+- **Labor-market persistence:** `UNRATE_level` and `UNRATE_delta` encode where unemployment is now and whether it is moving.
+- **Leading real-economy signal:** `PERMIT` proxies housing/construction-cycle weakness, which often shows up before labor-market deterioration.
+- **Forward-looking financial signal:** `S&P 500` and `T10Y3M_level` summarize market expectations and monetary/term-structure conditions.
+- **Household expectations:** `UMCSENTx` captures consumer confidence, which is linked to spending, business conditions, and hiring.
+- **Interpretability:** Track B is small enough that every feature can be explained to a sponsor or professor, unlike the full 123-variable panel.
+
+### Important caveat
+
+Track B is **not** necessarily the statistically optimal feature set for UNRATE. It is an interpretable leading-indicator set. A full-panel or automated feature-selection model may perform better, but Track B is easier to defend and aligns with the project goal of transparent comparisons against quantum models that need low-dimensional inputs.
+""")
+
+md(r"""
+## 4 · Build fixed 24-month window features
 
 For each forecast origin `t`, the feature vector contains all Track B columns for months `t-23` through `t`, flattened in chronological order. The target for horizon `h` is `UNRATE_level[t+h]`.
 """)
@@ -144,7 +172,7 @@ X_window.dropna().head()
 """)
 
 md(r"""
-## 4 · Models
+## 5 · Models
 
 - `ARD(6)`: linear autoregression using the latest six monthly UNRATE levels.
 - `Naive / Random Walk`: predicts the current UNRATE level for every horizon.
@@ -273,7 +301,7 @@ def valid_xy(X: pd.DataFrame, y: pd.Series, idx):
 """)
 
 md(r"""
-## 5 · Run forecasts
+## 6 · Run forecasts
 """)
 
 code(r"""
@@ -362,7 +390,7 @@ print(preds.groupby("model").size().reindex(MODEL_ORDER).dropna().astype(int))
 """)
 
 md(r"""
-## 6 · MASE results
+## 7 · MASE results
 
 Lower is better. `MASE < 1` means the model's mean absolute error is smaller than the in-fold naive one-step scaling error.
 """)
@@ -405,7 +433,7 @@ summary.style.format({"mean_mase": "{:.3f}", "median_mase": "{:.3f}", "best_mase
 """)
 
 md(r"""
-## 7 · Takeaways and grading notes
+## 8 · Takeaways and grading notes
 
 - This run uses **Track B + current UNRATE level** to forecast future UNRATE levels at 1, 3, and 6 months.
 - The **2-year fixed window** is implemented as a 24-month feature/history window, not a 24-month training window.

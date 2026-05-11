@@ -7511,7 +7511,7 @@ a.anchor-link {
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <main>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=7eee01a5">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=604d9759">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7523,7 +7523,7 @@ a.anchor-link {
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=88c266d8">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=efecc243">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7609,7 +7609,7 @@ a.anchor-link {
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=1d1cab1d">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=e9c109d1">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7619,7 +7619,7 @@ a.anchor-link {
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=320a1180">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=e894b63f">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7787,7 +7787,7 @@ Missing cells: 1
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=34dd1853">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=02bc8a23">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7833,17 +7833,90 @@ First fold: 1962-04-01 → 1982-03-01 / test 1982-04-01 → 1987-03-01
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6b739029">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=4fc412eb">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="3-%C2%B7-Build-fixed-24-month-window-features">3 · Build fixed 24-month window features<a class="anchor-link" href="#3-%C2%B7-Build-fixed-24-month-window-features">¶</a></h2><p>For each forecast origin <code>t</code>, the feature vector contains all Track B columns for months <code>t-23</code> through <code>t</code>, flattened in chronological order. The target for horizon <code>h</code> is <code>UNRATE_level[t+h]</code>.</p>
+<h2 id="3-%C2%B7-What-the-Track-B-features-mean,-and-why-they-are-relevant-for-UNRATE">3 · What the Track B features mean, and why they are relevant for UNRATE<a class="anchor-link" href="#3-%C2%B7-What-the-Track-B-features-mean,-and-why-they-are-relevant-for-UNRATE">¶</a></h2><p>Track B is the small, interpretable feature set that came from the sponsor-facing leading-indicator discussion in <code>01_data_prep.ipynb</code>. For this UNRATE experiment, I use the saved Track B features plus the current unemployment-rate level.</p>
+<table>
+<thead>
+<tr>
+<th>Feature used here</th>
+<th>What it means</th>
+<th>Transformation / source in this project</th>
+<th>Why it may help forecast UNRATE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>UNRATE_level</code></td>
+<td>Civilian unemployment rate, percent of labor force unemployed.</td>
+<td>Pulled from <code>levels_panel.parquet</code>, not stationarized. This is the current level at forecast origin <code>t</code>.</td>
+<td>Unemployment is highly persistent. The current level is the natural starting point for any 1-, 3-, or 6-month forecast and is what a naive/random-walk benchmark uses.</td>
+</tr>
+<tr>
+<td><code>UNRATE_delta</code></td>
+<td>Month-to-month change in the unemployment rate.</td>
+<td>This is the original Track B <code>UNRATE</code> column after McCracken-Ng transformation code 2, renamed to avoid confusion.</td>
+<td>Captures recent labor-market momentum. Rising unemployment tends to continue during slowdowns; falling unemployment can indicate ongoing expansion.</td>
+</tr>
+<tr>
+<td><code>PERMIT</code></td>
+<td>New private housing building permits.</td>
+<td>Stationarized FRED-MD feature. In the saved Track B panel it is transformed according to the FRED-MD code rather than used as raw level.</td>
+<td>Housing is cyclical and interest-rate sensitive. Permits often weaken before construction, employment, and broader labor demand weaken.</td>
+</tr>
+<tr>
+<td><code>S&amp;P 500</code></td>
+<td>Broad equity-market index.</td>
+<td>Stationarized FRED-MD feature, effectively an equity return/growth measure after transformation.</td>
+<td>Equity markets can price expected future earnings and recession risk before labor-market data deteriorate. Useful as a forward-looking financial signal.</td>
+</tr>
+<tr>
+<td><code>UMCSENTx</code></td>
+<td>University of Michigan consumer sentiment index.</td>
+<td>Stationarized FRED-MD feature.</td>
+<td>Consumer sentiment falls when households expect weaker income/job prospects. It can lead consumption and hiring conditions.</td>
+</tr>
+<tr>
+<td><code>T10Y3M_level</code></td>
+<td>10-year Treasury yield minus 3-month Treasury bill rate, in percentage points.</td>
+<td>Constructed in preprocessing from raw levels: <code>GS10 - TB3MS</code>. Kept as a level because inversion is a state, not a change.</td>
+<td>Yield-curve inversions are classic recession/labor-market warning signals. A low or negative spread can precede rising unemployment.</td>
+</tr>
+<tr>
+<td><code>T10Y3M_delta</code></td>
+<td>Month-to-month change in the 10-year minus 3-month yield spread.</td>
+<td>Difference of <code>T10Y3M_level</code>.</td>
+<td>Captures whether financial conditions are steepening or flattening recently, which may add short-run timing information beyond the level.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="Why-this-small-feature-set-is-defensible-for-UNRATE">Why this small feature set is defensible for UNRATE<a class="anchor-link" href="#Why-this-small-feature-set-is-defensible-for-UNRATE">¶</a></h3><ul>
+<li><strong>Labor-market persistence:</strong> <code>UNRATE_level</code> and <code>UNRATE_delta</code> encode where unemployment is now and whether it is moving.</li>
+<li><strong>Leading real-economy signal:</strong> <code>PERMIT</code> proxies housing/construction-cycle weakness, which often shows up before labor-market deterioration.</li>
+<li><strong>Forward-looking financial signal:</strong> <code>S&amp;P 500</code> and <code>T10Y3M_level</code> summarize market expectations and monetary/term-structure conditions.</li>
+<li><strong>Household expectations:</strong> <code>UMCSENTx</code> captures consumer confidence, which is linked to spending, business conditions, and hiring.</li>
+<li><strong>Interpretability:</strong> Track B is small enough that every feature can be explained to a sponsor or professor, unlike the full 123-variable panel.</li>
+</ul>
+<h3 id="Important-caveat">Important caveat<a class="anchor-link" href="#Important-caveat">¶</a></h3><p>Track B is <strong>not</strong> necessarily the statistically optimal feature set for UNRATE. It is an interpretable leading-indicator set. A full-panel or automated feature-selection model may perform better, but Track B is easier to defend and aligns with the project goal of transparent comparisons against quantum models that need low-dimensional inputs.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=df01ec18">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=db0b389c">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="4-%C2%B7-Build-fixed-24-month-window-features">4 · Build fixed 24-month window features<a class="anchor-link" href="#4-%C2%B7-Build-fixed-24-month-window-features">¶</a></h2><p>For each forecast origin <code>t</code>, the feature vector contains all Track B columns for months <code>t-23</code> through <code>t</code>, flattened in chronological order. The target for horizon <code>h</code> is <code>UNRATE_level[t+h]</code>.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=7e8d087f">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8082,13 +8155,13 @@ Feature count = 24 months × 7 features = 168
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=85ca804b">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=8aa488cc">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="4-%C2%B7-Models">4 · Models<a class="anchor-link" href="#4-%C2%B7-Models">¶</a></h2><ul>
+<h2 id="5-%C2%B7-Models">5 · Models<a class="anchor-link" href="#5-%C2%B7-Models">¶</a></h2><ul>
 <li><code>ARD(6)</code>: linear autoregression using the latest six monthly UNRATE levels.</li>
 <li><code>Naive / Random Walk</code>: predicts the current UNRATE level for every horizon.</li>
 <li><code>AdaBoost</code> and <code>Random Forest</code>: use the flattened 24-month Track B window directly.</li>
@@ -8097,7 +8170,7 @@ Feature count = 24 months × 7 features = 168
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=ec258917">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=5bb75c5d">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8198,7 +8271,7 @@ Feature count = 24 months × 7 features = 168
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=579d71bc">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=342145ff">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8251,17 +8324,17 @@ Feature count = 24 months × 7 features = 168
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=047e6149">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=816f1280">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="5-%C2%B7-Run-forecasts">5 · Run forecasts<a class="anchor-link" href="#5-%C2%B7-Run-forecasts">¶</a></h2>
+<h2 id="6-%C2%B7-Run-forecasts">6 · Run forecasts<a class="anchor-link" href="#6-%C2%B7-Run-forecasts">¶</a></h2>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=202a57f3">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=9813951b">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8323,7 +8396,7 @@ Feature count = 24 months × 7 features = 168
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=0a175d74">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=80546bec">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8371,14 +8444,8 @@ Feature count = 24 months × 7 features = 168
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>finished h=6, rows so far=56,160
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Raw rows: 56,160
-Elapsed: 3.08 minutes
+Raw rows: 56,160
+Elapsed: 1.61 minutes
 </pre>
 </div>
 </div>
@@ -8518,7 +8585,7 @@ Elapsed: 3.08 minutes
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=f5055883">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=b13c3e09">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8569,17 +8636,17 @@ dtype: int64
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=b67510fa">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=b6f035c5">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="6-%C2%B7-MASE-results">6 · MASE results<a class="anchor-link" href="#6-%C2%B7-MASE-results">¶</a></h2><p>Lower is better. <code>MASE &lt; 1</code> means the model's mean absolute error is smaller than the in-fold naive one-step scaling error.</p>
+<h2 id="7-%C2%B7-MASE-results">7 · MASE results<a class="anchor-link" href="#7-%C2%B7-MASE-results">¶</a></h2><p>Lower is better. <code>MASE &lt; 1</code> means the model's mean absolute error is smaller than the in-fold naive one-step scaling error.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=de78684d">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=6da56846">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8618,110 +8685,110 @@ dtype: int64
 <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[9]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
 <style type="text/css">
-#T_3b39b_row0_col0 {
+#T_5f96e_row0_col0 {
   background-color: #026c39;
   color: #f1f1f1;
 }
-#T_3b39b_row0_col1 {
+#T_5f96e_row0_col1 {
   background-color: #3ca959;
   color: #f1f1f1;
 }
-#T_3b39b_row0_col2 {
+#T_5f96e_row0_col2 {
   background-color: #a5d86a;
   color: #000000;
 }
-#T_3b39b_row1_col0 {
+#T_5f96e_row1_col0 {
   background-color: #006837;
   color: #f1f1f1;
 }
-#T_3b39b_row1_col1 {
+#T_5f96e_row1_col1 {
   background-color: #39a758;
   color: #f1f1f1;
 }
-#T_3b39b_row1_col2 {
+#T_5f96e_row1_col2 {
   background-color: #b3df72;
   color: #000000;
 }
-#T_3b39b_row2_col0 {
+#T_5f96e_row2_col0 {
   background-color: #279f53;
   color: #f1f1f1;
 }
-#T_3b39b_row2_col1 {
+#T_5f96e_row2_col1 {
   background-color: #82c966;
   color: #000000;
 }
-#T_3b39b_row2_col2 {
+#T_5f96e_row2_col2 {
   background-color: #f2faae;
   color: #000000;
 }
-#T_3b39b_row3_col0 {
+#T_5f96e_row3_col0 {
   background-color: #8ecf67;
   color: #000000;
 }
-#T_3b39b_row3_col1 {
+#T_5f96e_row3_col1 {
   background-color: #c3e67d;
   color: #000000;
 }
-#T_3b39b_row3_col2 {
+#T_5f96e_row3_col2 {
   background-color: #fffebe;
   color: #000000;
 }
-#T_3b39b_row4_col0 {
+#T_5f96e_row4_col0 {
   background-color: #fee797;
   color: #000000;
 }
-#T_3b39b_row4_col1 {
+#T_5f96e_row4_col1 {
   background-color: #fdc776;
   color: #000000;
 }
-#T_3b39b_row4_col2 {
+#T_5f96e_row4_col2 {
   background-color: #fa9857;
   color: #000000;
 }
-#T_3b39b_row5_col0 {
+#T_5f96e_row5_col0 {
   background-color: #bb1526;
   color: #f1f1f1;
 }
-#T_3b39b_row5_col1 {
+#T_5f96e_row5_col1 {
   background-color: #af0926;
   color: #f1f1f1;
 }
-#T_3b39b_row5_col2 {
+#T_5f96e_row5_col2 {
   background-color: #a50026;
   color: #f1f1f1;
 }
-#T_3b39b_row6_col0 {
+#T_5f96e_row6_col0 {
   background-color: #33a456;
   color: #f1f1f1;
 }
-#T_3b39b_row6_col1 {
+#T_5f96e_row6_col1 {
   background-color: #66bd63;
   color: #f1f1f1;
 }
-#T_3b39b_row6_col2 {
+#T_5f96e_row6_col2 {
   background-color: #afdd70;
   color: #000000;
 }
-#T_3b39b_row7_col0 {
+#T_5f96e_row7_col0 {
   background-color: #d3ec87;
   color: #000000;
 }
-#T_3b39b_row7_col1 {
+#T_5f96e_row7_col1 {
   background-color: #f5fbb2;
   color: #000000;
 }
-#T_3b39b_row7_col2 {
+#T_5f96e_row7_col2 {
   background-color: #fee999;
   color: #000000;
 }
 </style>
-<table id="T_3b39b">
+<table id="T_5f96e">
 <thead>
 <tr>
 <th class="index_name level0">h</th>
-<th class="col_heading level0 col0" id="T_3b39b_level0_col0">1</th>
-<th class="col_heading level0 col1" id="T_3b39b_level0_col1">3</th>
-<th class="col_heading level0 col2" id="T_3b39b_level0_col2">6</th>
+<th class="col_heading level0 col0" id="T_5f96e_level0_col0">1</th>
+<th class="col_heading level0 col1" id="T_5f96e_level0_col1">3</th>
+<th class="col_heading level0 col2" id="T_5f96e_level0_col2">6</th>
 </tr>
 <tr>
 <th class="index_name level0">model</th>
@@ -8732,52 +8799,52 @@ dtype: int64
 </thead>
 <tbody>
 <tr>
-<th class="row_heading level0 row0" id="T_3b39b_level0_row0">ARD(6)</th>
-<td class="data row0 col0" id="T_3b39b_row0_col0">1.256</td>
-<td class="data row0 col1" id="T_3b39b_row0_col1">2.440</td>
-<td class="data row0 col2" id="T_3b39b_row0_col2">3.774</td>
+<th class="row_heading level0 row0" id="T_5f96e_level0_row0">ARD(6)</th>
+<td class="data row0 col0" id="T_5f96e_row0_col0">1.256</td>
+<td class="data row0 col1" id="T_5f96e_row0_col1">2.440</td>
+<td class="data row0 col2" id="T_5f96e_row0_col2">3.774</td>
 </tr>
 <tr>
-<th class="row_heading level0 row1" id="T_3b39b_level0_row1">Naive / Random Walk</th>
-<td class="data row1 col0" id="T_3b39b_row1_col0">1.185</td>
-<td class="data row1 col1" id="T_3b39b_row1_col1">2.424</td>
-<td class="data row1 col2" id="T_3b39b_row1_col2">4.020</td>
+<th class="row_heading level0 row1" id="T_5f96e_level0_row1">Naive / Random Walk</th>
+<td class="data row1 col0" id="T_5f96e_row1_col0">1.185</td>
+<td class="data row1 col1" id="T_5f96e_row1_col1">2.424</td>
+<td class="data row1 col2" id="T_5f96e_row1_col2">4.020</td>
 </tr>
 <tr>
-<th class="row_heading level0 row2" id="T_3b39b_level0_row2">AdaBoost</th>
-<td class="data row2 col0" id="T_3b39b_row2_col0">2.225</td>
-<td class="data row2 col1" id="T_3b39b_row2_col1">3.309</td>
-<td class="data row2 col2" id="T_3b39b_row2_col2">5.223</td>
+<th class="row_heading level0 row2" id="T_5f96e_level0_row2">AdaBoost</th>
+<td class="data row2 col0" id="T_5f96e_row2_col0">2.225</td>
+<td class="data row2 col1" id="T_5f96e_row2_col1">3.309</td>
+<td class="data row2 col2" id="T_5f96e_row2_col2">5.223</td>
 </tr>
 <tr>
-<th class="row_heading level0 row3" id="T_3b39b_level0_row3">Random Forest</th>
-<td class="data row3 col0" id="T_3b39b_row3_col0">3.468</td>
-<td class="data row3 col1" id="T_3b39b_row3_col1">4.285</td>
-<td class="data row3 col2" id="T_3b39b_row3_col2">5.543</td>
+<th class="row_heading level0 row3" id="T_5f96e_level0_row3">Random Forest</th>
+<td class="data row3 col0" id="T_5f96e_row3_col0">3.468</td>
+<td class="data row3 col1" id="T_5f96e_row3_col1">4.285</td>
+<td class="data row3 col2" id="T_5f96e_row3_col2">5.543</td>
 </tr>
 <tr>
-<th class="row_heading level0 row4" id="T_3b39b_level0_row4">AdaBoost-DI</th>
-<td class="data row4 col0" id="T_3b39b_row4_col0">6.167</td>
-<td class="data row4 col1" id="T_3b39b_row4_col1">6.821</td>
-<td class="data row4 col2" id="T_3b39b_row4_col2">7.504</td>
+<th class="row_heading level0 row4" id="T_5f96e_level0_row4">AdaBoost-DI</th>
+<td class="data row4 col0" id="T_5f96e_row4_col0">6.167</td>
+<td class="data row4 col1" id="T_5f96e_row4_col1">6.821</td>
+<td class="data row4 col2" id="T_5f96e_row4_col2">7.504</td>
 </tr>
 <tr>
-<th class="row_heading level0 row5" id="T_3b39b_level0_row5">kNN-DI</th>
-<td class="data row5 col0" id="T_3b39b_row5_col0">9.438</td>
-<td class="data row5 col1" id="T_3b39b_row5_col1">9.642</td>
-<td class="data row5 col2" id="T_3b39b_row5_col2">9.835</td>
+<th class="row_heading level0 row5" id="T_5f96e_level0_row5">kNN-DI</th>
+<td class="data row5 col0" id="T_5f96e_row5_col0">9.438</td>
+<td class="data row5 col1" id="T_5f96e_row5_col1">9.642</td>
+<td class="data row5 col2" id="T_5f96e_row5_col2">9.835</td>
 </tr>
 <tr>
-<th class="row_heading level0 row6" id="T_3b39b_level0_row6">SVR linear-DI</th>
-<td class="data row6 col0" id="T_3b39b_row6_col0">2.349</td>
-<td class="data row6 col1" id="T_3b39b_row6_col1">2.920</td>
-<td class="data row6 col2" id="T_3b39b_row6_col2">3.938</td>
+<th class="row_heading level0 row6" id="T_5f96e_level0_row6">SVR linear-DI</th>
+<td class="data row6 col0" id="T_5f96e_row6_col0">2.349</td>
+<td class="data row6 col1" id="T_5f96e_row6_col1">2.920</td>
+<td class="data row6 col2" id="T_5f96e_row6_col2">3.938</td>
 </tr>
 <tr>
-<th class="row_heading level0 row7" id="T_3b39b_level0_row7">XGBoost-DI</th>
-<td class="data row7 col0" id="T_3b39b_row7_col0">4.552</td>
-<td class="data row7 col1" id="T_3b39b_row7_col1">5.280</td>
-<td class="data row7 col2" id="T_3b39b_row7_col2">6.136</td>
+<th class="row_heading level0 row7" id="T_5f96e_level0_row7">XGBoost-DI</th>
+<td class="data row7 col0" id="T_5f96e_row7_col0">4.552</td>
+<td class="data row7 col1" id="T_5f96e_row7_col1">5.280</td>
+<td class="data row7 col2" id="T_5f96e_row7_col2">6.136</td>
 </tr>
 </tbody>
 </table>
@@ -8785,7 +8852,7 @@ dtype: int64
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=ad777589">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=7a16049d">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8810,45 +8877,45 @@ dtype: int64
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
 <style type="text/css">
 </style>
-<table id="T_2a6b2">
+<table id="T_b721e">
 <thead>
 <tr>
 <th class="blank level0"> </th>
-<th class="col_heading level0 col0" id="T_2a6b2_level0_col0">target</th>
-<th class="col_heading level0 col1" id="T_2a6b2_level0_col1">h</th>
-<th class="col_heading level0 col2" id="T_2a6b2_level0_col2">model</th>
-<th class="col_heading level0 col3" id="T_2a6b2_level0_col3">n</th>
-<th class="col_heading level0 col4" id="T_2a6b2_level0_col4">mae</th>
-<th class="col_heading level0 col5" id="T_2a6b2_level0_col5">mase</th>
+<th class="col_heading level0 col0" id="T_b721e_level0_col0">target</th>
+<th class="col_heading level0 col1" id="T_b721e_level0_col1">h</th>
+<th class="col_heading level0 col2" id="T_b721e_level0_col2">model</th>
+<th class="col_heading level0 col3" id="T_b721e_level0_col3">n</th>
+<th class="col_heading level0 col4" id="T_b721e_level0_col4">mae</th>
+<th class="col_heading level0 col5" id="T_b721e_level0_col5">mase</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<th class="row_heading level0 row0" id="T_2a6b2_level0_row0">3</th>
-<td class="data row0 col0" id="T_2a6b2_row0_col0">UNRATE_level</td>
-<td class="data row0 col1" id="T_2a6b2_row0_col1">1</td>
-<td class="data row0 col2" id="T_2a6b2_row0_col2">Naive / Random Walk</td>
-<td class="data row0 col3" id="T_2a6b2_row0_col3">516</td>
-<td class="data row0 col4" id="T_2a6b2_row0_col4">0.153</td>
-<td class="data row0 col5" id="T_2a6b2_row0_col5">1.185</td>
+<th class="row_heading level0 row0" id="T_b721e_level0_row0">3</th>
+<td class="data row0 col0" id="T_b721e_row0_col0">UNRATE_level</td>
+<td class="data row0 col1" id="T_b721e_row0_col1">1</td>
+<td class="data row0 col2" id="T_b721e_row0_col2">Naive / Random Walk</td>
+<td class="data row0 col3" id="T_b721e_row0_col3">516</td>
+<td class="data row0 col4" id="T_b721e_row0_col4">0.153</td>
+<td class="data row0 col5" id="T_b721e_row0_col5">1.185</td>
 </tr>
 <tr>
-<th class="row_heading level0 row1" id="T_2a6b2_level0_row1">11</th>
-<td class="data row1 col0" id="T_2a6b2_row1_col0">UNRATE_level</td>
-<td class="data row1 col1" id="T_2a6b2_row1_col1">3</td>
-<td class="data row1 col2" id="T_2a6b2_row1_col2">Naive / Random Walk</td>
-<td class="data row1 col3" id="T_2a6b2_row1_col3">516</td>
-<td class="data row1 col4" id="T_2a6b2_row1_col4">0.313</td>
-<td class="data row1 col5" id="T_2a6b2_row1_col5">2.424</td>
+<th class="row_heading level0 row1" id="T_b721e_level0_row1">11</th>
+<td class="data row1 col0" id="T_b721e_row1_col0">UNRATE_level</td>
+<td class="data row1 col1" id="T_b721e_row1_col1">3</td>
+<td class="data row1 col2" id="T_b721e_row1_col2">Naive / Random Walk</td>
+<td class="data row1 col3" id="T_b721e_row1_col3">516</td>
+<td class="data row1 col4" id="T_b721e_row1_col4">0.313</td>
+<td class="data row1 col5" id="T_b721e_row1_col5">2.424</td>
 </tr>
 <tr>
-<th class="row_heading level0 row2" id="T_2a6b2_level0_row2">16</th>
-<td class="data row2 col0" id="T_2a6b2_row2_col0">UNRATE_level</td>
-<td class="data row2 col1" id="T_2a6b2_row2_col1">6</td>
-<td class="data row2 col2" id="T_2a6b2_row2_col2">ARD(6)</td>
-<td class="data row2 col3" id="T_2a6b2_row2_col3">516</td>
-<td class="data row2 col4" id="T_2a6b2_row2_col4">0.486</td>
-<td class="data row2 col5" id="T_2a6b2_row2_col5">3.774</td>
+<th class="row_heading level0 row2" id="T_b721e_level0_row2">16</th>
+<td class="data row2 col0" id="T_b721e_row2_col0">UNRATE_level</td>
+<td class="data row2 col1" id="T_b721e_row2_col1">6</td>
+<td class="data row2 col2" id="T_b721e_row2_col2">ARD(6)</td>
+<td class="data row2 col3" id="T_b721e_row2_col3">516</td>
+<td class="data row2 col4" id="T_b721e_row2_col4">0.486</td>
+<td class="data row2 col5" id="T_b721e_row2_col5">3.774</td>
 </tr>
 </tbody>
 </table>
@@ -8856,7 +8923,7 @@ dtype: int64
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=db58b83a">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=c8f88598">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8885,14 +8952,14 @@ dtype: int64
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
 <style type="text/css">
 </style>
-<table id="T_1306e">
+<table id="T_c253e">
 <thead>
 <tr>
 <th class="blank level0"> </th>
-<th class="col_heading level0 col0" id="T_1306e_level0_col0">mean_mase</th>
-<th class="col_heading level0 col1" id="T_1306e_level0_col1">median_mase</th>
-<th class="col_heading level0 col2" id="T_1306e_level0_col2">best_mase</th>
-<th class="col_heading level0 col3" id="T_1306e_level0_col3">cells</th>
+<th class="col_heading level0 col0" id="T_c253e_level0_col0">mean_mase</th>
+<th class="col_heading level0 col1" id="T_c253e_level0_col1">median_mase</th>
+<th class="col_heading level0 col2" id="T_c253e_level0_col2">best_mase</th>
+<th class="col_heading level0 col3" id="T_c253e_level0_col3">cells</th>
 </tr>
 <tr>
 <th class="index_name level0">model</th>
@@ -8904,60 +8971,60 @@ dtype: int64
 </thead>
 <tbody>
 <tr>
-<th class="row_heading level0 row0" id="T_1306e_level0_row0">ARD(6)</th>
-<td class="data row0 col0" id="T_1306e_row0_col0">2.490</td>
-<td class="data row0 col1" id="T_1306e_row0_col1">2.440</td>
-<td class="data row0 col2" id="T_1306e_row0_col2">1.256</td>
-<td class="data row0 col3" id="T_1306e_row0_col3">3</td>
+<th class="row_heading level0 row0" id="T_c253e_level0_row0">ARD(6)</th>
+<td class="data row0 col0" id="T_c253e_row0_col0">2.490</td>
+<td class="data row0 col1" id="T_c253e_row0_col1">2.440</td>
+<td class="data row0 col2" id="T_c253e_row0_col2">1.256</td>
+<td class="data row0 col3" id="T_c253e_row0_col3">3</td>
 </tr>
 <tr>
-<th class="row_heading level0 row1" id="T_1306e_level0_row1">Naive / Random Walk</th>
-<td class="data row1 col0" id="T_1306e_row1_col0">2.543</td>
-<td class="data row1 col1" id="T_1306e_row1_col1">2.424</td>
-<td class="data row1 col2" id="T_1306e_row1_col2">1.185</td>
-<td class="data row1 col3" id="T_1306e_row1_col3">3</td>
+<th class="row_heading level0 row1" id="T_c253e_level0_row1">Naive / Random Walk</th>
+<td class="data row1 col0" id="T_c253e_row1_col0">2.543</td>
+<td class="data row1 col1" id="T_c253e_row1_col1">2.424</td>
+<td class="data row1 col2" id="T_c253e_row1_col2">1.185</td>
+<td class="data row1 col3" id="T_c253e_row1_col3">3</td>
 </tr>
 <tr>
-<th class="row_heading level0 row2" id="T_1306e_level0_row2">SVR linear-DI</th>
-<td class="data row2 col0" id="T_1306e_row2_col0">3.069</td>
-<td class="data row2 col1" id="T_1306e_row2_col1">2.920</td>
-<td class="data row2 col2" id="T_1306e_row2_col2">2.349</td>
-<td class="data row2 col3" id="T_1306e_row2_col3">3</td>
+<th class="row_heading level0 row2" id="T_c253e_level0_row2">SVR linear-DI</th>
+<td class="data row2 col0" id="T_c253e_row2_col0">3.069</td>
+<td class="data row2 col1" id="T_c253e_row2_col1">2.920</td>
+<td class="data row2 col2" id="T_c253e_row2_col2">2.349</td>
+<td class="data row2 col3" id="T_c253e_row2_col3">3</td>
 </tr>
 <tr>
-<th class="row_heading level0 row3" id="T_1306e_level0_row3">AdaBoost</th>
-<td class="data row3 col0" id="T_1306e_row3_col0">3.586</td>
-<td class="data row3 col1" id="T_1306e_row3_col1">3.309</td>
-<td class="data row3 col2" id="T_1306e_row3_col2">2.225</td>
-<td class="data row3 col3" id="T_1306e_row3_col3">3</td>
+<th class="row_heading level0 row3" id="T_c253e_level0_row3">AdaBoost</th>
+<td class="data row3 col0" id="T_c253e_row3_col0">3.586</td>
+<td class="data row3 col1" id="T_c253e_row3_col1">3.309</td>
+<td class="data row3 col2" id="T_c253e_row3_col2">2.225</td>
+<td class="data row3 col3" id="T_c253e_row3_col3">3</td>
 </tr>
 <tr>
-<th class="row_heading level0 row4" id="T_1306e_level0_row4">Random Forest</th>
-<td class="data row4 col0" id="T_1306e_row4_col0">4.432</td>
-<td class="data row4 col1" id="T_1306e_row4_col1">4.285</td>
-<td class="data row4 col2" id="T_1306e_row4_col2">3.468</td>
-<td class="data row4 col3" id="T_1306e_row4_col3">3</td>
+<th class="row_heading level0 row4" id="T_c253e_level0_row4">Random Forest</th>
+<td class="data row4 col0" id="T_c253e_row4_col0">4.432</td>
+<td class="data row4 col1" id="T_c253e_row4_col1">4.285</td>
+<td class="data row4 col2" id="T_c253e_row4_col2">3.468</td>
+<td class="data row4 col3" id="T_c253e_row4_col3">3</td>
 </tr>
 <tr>
-<th class="row_heading level0 row5" id="T_1306e_level0_row5">XGBoost-DI</th>
-<td class="data row5 col0" id="T_1306e_row5_col0">5.322</td>
-<td class="data row5 col1" id="T_1306e_row5_col1">5.280</td>
-<td class="data row5 col2" id="T_1306e_row5_col2">4.552</td>
-<td class="data row5 col3" id="T_1306e_row5_col3">3</td>
+<th class="row_heading level0 row5" id="T_c253e_level0_row5">XGBoost-DI</th>
+<td class="data row5 col0" id="T_c253e_row5_col0">5.322</td>
+<td class="data row5 col1" id="T_c253e_row5_col1">5.280</td>
+<td class="data row5 col2" id="T_c253e_row5_col2">4.552</td>
+<td class="data row5 col3" id="T_c253e_row5_col3">3</td>
 </tr>
 <tr>
-<th class="row_heading level0 row6" id="T_1306e_level0_row6">AdaBoost-DI</th>
-<td class="data row6 col0" id="T_1306e_row6_col0">6.831</td>
-<td class="data row6 col1" id="T_1306e_row6_col1">6.821</td>
-<td class="data row6 col2" id="T_1306e_row6_col2">6.167</td>
-<td class="data row6 col3" id="T_1306e_row6_col3">3</td>
+<th class="row_heading level0 row6" id="T_c253e_level0_row6">AdaBoost-DI</th>
+<td class="data row6 col0" id="T_c253e_row6_col0">6.831</td>
+<td class="data row6 col1" id="T_c253e_row6_col1">6.821</td>
+<td class="data row6 col2" id="T_c253e_row6_col2">6.167</td>
+<td class="data row6 col3" id="T_c253e_row6_col3">3</td>
 </tr>
 <tr>
-<th class="row_heading level0 row7" id="T_1306e_level0_row7">kNN-DI</th>
-<td class="data row7 col0" id="T_1306e_row7_col0">9.638</td>
-<td class="data row7 col1" id="T_1306e_row7_col1">9.642</td>
-<td class="data row7 col2" id="T_1306e_row7_col2">9.438</td>
-<td class="data row7 col3" id="T_1306e_row7_col3">3</td>
+<th class="row_heading level0 row7" id="T_c253e_level0_row7">kNN-DI</th>
+<td class="data row7 col0" id="T_c253e_row7_col0">9.638</td>
+<td class="data row7 col1" id="T_c253e_row7_col1">9.642</td>
+<td class="data row7 col2" id="T_c253e_row7_col2">9.438</td>
+<td class="data row7 col3" id="T_c253e_row7_col3">3</td>
 </tr>
 </tbody>
 </table>
@@ -8966,13 +9033,13 @@ dtype: int64
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=11344cad">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=e9cc7718">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="7-%C2%B7-Takeaways-and-grading-notes">7 · Takeaways and grading notes<a class="anchor-link" href="#7-%C2%B7-Takeaways-and-grading-notes">¶</a></h2><ul>
+<h2 id="8-%C2%B7-Takeaways-and-grading-notes">8 · Takeaways and grading notes<a class="anchor-link" href="#8-%C2%B7-Takeaways-and-grading-notes">¶</a></h2><ul>
 <li>This run uses <strong>Track B + current UNRATE level</strong> to forecast future UNRATE levels at 1, 3, and 6 months.</li>
 <li>The <strong>2-year fixed window</strong> is implemented as a 24-month feature/history window, not a 24-month training window.</li>
 <li>MASE is computed per prediction using the training-fold one-step UNRATE-level scale, then averaged.</li>
