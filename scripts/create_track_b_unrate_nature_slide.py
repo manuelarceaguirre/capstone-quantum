@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 
 ROOT = Path(__file__).resolve().parents[1]
 RESULTS = ROOT / "results" / "track_b_unrate_24m_mase_metrics.csv"
+PREDICTIONS = ROOT / "results" / "track_b_unrate_24m_mase_predictions.parquet"
 FIG_DIR = ROOT / "figures"
 SLIDE_DIR = ROOT / "slides"
 FIG_DIR.mkdir(exist_ok=True)
@@ -48,6 +49,22 @@ PALETTE = {
 }
 
 metrics = pd.read_csv(RESULTS)
+predictions = pd.read_parquet(PREDICTIONS)
+
+# Full metric table with RMSE for the Best Rows table.
+metric_rows = []
+for (h, model), g in predictions.groupby(["h", "model"]):
+    err = g["y_pred"] - g["y_true"]
+    metric_rows.append({
+        "target": "UNRATE",
+        "h": int(h),
+        "model": model,
+        "rmse": float(np.sqrt(np.mean(err ** 2))),
+        "mae": float(np.mean(np.abs(err))),
+        "mase": float(g["scaled_abs_error"].mean()),
+        "n_predictions": int(len(g)),
+    })
+metrics_full = pd.DataFrame(metric_rows)
 
 baseline_names = ["Naive / Random Walk", "ARD(6)"]
 ml = metrics[~metrics["model"].isin(baseline_names)].copy()
@@ -67,12 +84,13 @@ plot_df = (
 plot_df.to_csv(FIG_DIR / "track_b_unrate_mase_chart_source.csv", index=False)
 
 best_overall = (
-    metrics.sort_values("mase")
+    metrics_full.sort_values("mase")
     .groupby("h", as_index=False)
-    .first()[["h", "model", "mae", "mase"]]
+    .first()[["target", "h", "model", "rmse", "mae", "mase", "n_predictions"]]
     .sort_values("h")
 )
 best_overall.to_csv(FIG_DIR / "track_b_unrate_mase_best_by_horizon.csv", index=False)
+best_overall.rename(columns={"h": "horizon"}).to_csv(ROOT / "results" / "track_b_unrate_24m_mase_best_rows.csv", index=False)
 
 # Nature-style single-panel chart.
 fig, ax = plt.subplots(figsize=(5.9, 3.65))
@@ -127,7 +145,10 @@ def latex_escape(s: str) -> str:
 
 rows = []
 for _, r in best_overall.iterrows():
-    rows.append(f"{int(r['h'])} mo & {latex_escape(r['model'])} & {fmt_pp(r['mae'])} & {fmt_mase(r['mase'])} \\\\")
+    rows.append(
+        f"UNRATE & {int(r['h'])} & {latex_escape(r['model'])} & "
+        f"{r['rmse']:.3f} & {r['mae']:.3f} & {r['mase']:.3f} & {int(r['n_predictions'])} \\\\"
+    )
 rows_tex = "\n".join(rows)
 
 tex = rf"""
@@ -161,17 +182,18 @@ tex = rf"""
     \includegraphics[width=\linewidth]{{../figures/track_b_unrate_mase_nature.pdf}}
   \end{{column}}
   \begin{{column}}{{0.35\textwidth}}
-    \textbf{{Best model by horizon}}\\[-0.35em]
-    {{\scriptsize Lower MASE is better. MAE is in percentage points of unemployment.}}
+    \textbf{{Best rows}}\\[-0.35em]
+    {{\scriptsize Best model at each horizon, selected by lowest MASE. Errors are in unemployment-rate percentage points.}}
     \vspace{{0.45em}}
 
-    \begin{{tabular}}{{@{{}}r l r r@{{}}}}
+    \resizebox{{\linewidth}}{{!}}{{%
+    \begin{{tabular}}{{@{{}}l r l r r r r@{{}}}}
     \toprule
-    $h$ & Model & MAE & MASE \\
+    Target & $h$ & Model & RMSE & MAE & MASE & $n$ \\
     \midrule
     {rows_tex}
     \bottomrule
-    \end{{tabular}}
+    \end{{tabular}}}}
 
     \vspace{{1.0em}}
     \textbf{{Interpretation.}}\\[-0.2em]

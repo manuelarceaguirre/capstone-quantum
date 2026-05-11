@@ -28,19 +28,20 @@
     \includegraphics[width=\linewidth]{../figures/track_b_unrate_mase_nature.pdf}
   \end{column}
   \begin{column}{0.35\textwidth}
-    \textbf{Best model by horizon}\\[-0.35em]
-    {\scriptsize Lower MASE is better. MAE is in percentage points of unemployment.}
+    \textbf{Best rows}\\[-0.35em]
+    {\scriptsize Best model at each horizon, selected by lowest MASE. Errors are in unemployment-rate percentage points.}
     \vspace{0.45em}
 
-    \begin{tabular}{@{}r l r r@{}}
+    \resizebox{\linewidth}{!}{%
+    \begin{tabular}{@{}l r l r r r r@{}}
     \toprule
-    $h$ & Model & MAE & MASE \\
+    Target & $h$ & Model & RMSE & MAE & MASE & $n$ \\
     \midrule
-    1 mo & Naive / Random Walk & 0.153 pp & 1.185 \\
-3 mo & Naive / Random Walk & 0.313 pp & 2.424 \\
-6 mo & ARD(6) & 0.486 pp & 3.774 \\
+    UNRATE & 1 & Naive / Random Walk & 0.511 & 0.153 & 1.185 & 516 \\
+UNRATE & 3 & Naive / Random Walk & 0.865 & 0.313 & 2.424 & 516 \\
+UNRATE & 6 & ARD(6) & 1.398 & 0.486 & 3.774 & 516 \\
     \bottomrule
-    \end{tabular}
+    \end{tabular}}
 
     \vspace{1.0em}
     \textbf{Interpretation.}\\[-0.2em]
