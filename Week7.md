@@ -48,4 +48,7 @@ a defendible reason behind it.
 4. William - Find a source to justify the choice of a curated set of predictors for CPI and Inflation. Aiming for a small number (6-10). The important thing is that we have evidence and
 a defendible reason behind it.
 
+# Notes
+1. Library for choosing between a collection of error metrics: https://scikit-criteria.quatrope.org/en/latest/tutorial/rankrev.html#Test-criterion-1---Rank-Invariance
+
 
