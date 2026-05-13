@@ -78,7 +78,7 @@ sequence models operationally realistic.
 Using the `CV_Work` environment, the formal Track B run was completed on:
 
 - `Track B`
-- horizons: `h=1`
+- horizons: `h=1, 3, 6, 12`
 - all `39` shared folds
 - fixed train window: `24` months
 - sequence length: `24`
@@ -88,20 +88,47 @@ Using the `CV_Work` environment, the formal Track B run was completed on:
 
 Full pooled out-of-sample results:
 
-| Target | Best model by RMSE | RMSE | MAE | MASE |
-| --- | --- | ---: | ---: | ---: |
-| `INDPRO` | `RNN` | `0.010444` | `0.005748` | `1.067959` |
-| `PAYEMS` | `RNN` | `0.007357` | `0.002013` | `2.373001` |
-| `CPIAUCSL` | `GRU` | `0.002917` | `0.002054` | `1.185069` |
-| `S&P 500` | `RNN` | `0.038924` | `0.028287` | `0.958801` |
+| Target | Horizon | Model | RMSE | MAE | MASE | Predictions |
+| --- | ---: | --- | ---: | ---: | ---: | ---: |
+| `CPIAUCSL` | 1 | `GRU` | `0.003002` | `0.002130` | `1.205221` | 2340 |
+| `CPIAUCSL` | 1 | `RNN` | `0.002872` | `0.001990` | `1.152910` | 2340 |
+| `CPIAUCSL` | 3 | `GRU` | `0.007130` | `0.004825` | `2.185147` | 2340 |
+| `CPIAUCSL` | 3 | `RNN` | `0.007293` | `0.005131` | `2.298783` | 2340 |
+| `CPIAUCSL` | 6 | `GRU` | `0.011428` | `0.008095` | `3.551565` | 2340 |
+| `CPIAUCSL` | 6 | `RNN` | `0.011771` | `0.008167` | `3.571194` | 2340 |
+| `CPIAUCSL` | 12 | `GRU` | `0.018646` | `0.013722` | `5.821866` | 2339 |
+| `CPIAUCSL` | 12 | `RNN` | `0.018621` | `0.013652` | `5.754534` | 2339 |
+| `INDPRO` | 1 | `GRU` | `0.010523` | `0.005849` | `1.081108` | 2340 |
+| `INDPRO` | 1 | `RNN` | `0.010444` | `0.005748` | `1.067959` | 2340 |
+| `INDPRO` | 3 | `GRU` | `0.021525` | `0.013407` | `2.453268` | 2340 |
+| `INDPRO` | 3 | `RNN` | `0.021054` | `0.012888` | `2.407835` | 2340 |
+| `INDPRO` | 6 | `GRU` | `0.033079` | `0.023051` | `3.913385` | 2340 |
+| `INDPRO` | 6 | `RNN` | `0.033177` | `0.023526` | `4.016241` | 2340 |
+| `INDPRO` | 12 | `GRU` | `0.054001` | `0.039088` | `5.771831` | 2339 |
+| `INDPRO` | 12 | `RNN` | `0.056336` | `0.040747` | `5.975287` | 2339 |
+| `PAYEMS` | 1 | `GRU` | `0.007384` | `0.002076` | `2.415289` | 2340 |
+| `PAYEMS` | 1 | `RNN` | `0.007368` | `0.002024` | `2.388242` | 2340 |
+| `PAYEMS` | 3 | `GRU` | `0.012867` | `0.005521` | `6.332766` | 2340 |
+| `PAYEMS` | 3 | `RNN` | `0.012845` | `0.005502` | `6.320277` | 2340 |
+| `PAYEMS` | 6 | `GRU` | `0.018458` | `0.010718` | `9.803875` | 2340 |
+| `PAYEMS` | 6 | `RNN` | `0.019183` | `0.010979` | `9.833723` | 2340 |
+| `PAYEMS` | 12 | `GRU` | `0.029853` | `0.020596` | `15.198590` | 2339 |
+| `PAYEMS` | 12 | `RNN` | `0.029915` | `0.020408` | `15.142995` | 2339 |
+| `S&P 500` | 1 | `GRU` | `0.039564` | `0.028407` | `0.963306` | 2340 |
+| `S&P 500` | 1 | `RNN` | `0.038689` | `0.027981` | `0.948989` | 2340 |
+| `S&P 500` | 3 | `GRU` | `0.081012` | `0.059438` | `1.826745` | 2340 |
+| `S&P 500` | 3 | `RNN` | `0.081740` | `0.060650` | `1.837380` | 2340 |
+| `S&P 500` | 6 | `GRU` | `0.132389` | `0.100089` | `2.993925` | 2340 |
+| `S&P 500` | 6 | `RNN` | `0.133941` | `0.099248` | `2.943822` | 2340 |
+| `S&P 500` | 12 | `GRU` | `0.200795` | `0.151278` | `4.249884` | 2339 |
+| `S&P 500` | 12 | `RNN` | `0.199421` | `0.152069` | `4.352434` | 2339 |
 
-Each row pools `2,340` predictions across the shared test windows. The result is
-useful as William's official first-pass recurrent benchmark, not as a final model
-selection claim. MASE is computed fold by fold using the training target's naive
-one-step MAE as the denominator, then pooled over test predictions. The most
-important signal is that `GRU` does not dominate the simpler `RNN`; it only wins
-on `CPIAUCSL` by RMSE/MAE in this configuration, while `RNN` is slightly better on
-`CPIAUCSL` by MASE.
+Each row pools predictions across the shared test windows. Horizons `1, 3, and 6`
+have `2,340` predictions; horizon `12` has `2,339` because the last target label
+falls beyond the available data range. MASE is computed fold by fold using the
+training target's naive one-step MAE as the denominator, then pooled over test
+predictions. The result is useful as William's official recurrent benchmark, not
+as a final model-selection claim.
 
 ## Additional Quick Checks
 
