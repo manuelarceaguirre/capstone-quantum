@@ -1,0 +1,58 @@
+\documentclass[aspectratio=169,10pt]{beamer}
+\usetheme{default}
+\usefonttheme{professionalfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\definecolor{ink}{HTML}{0F172A}
+\definecolor{muted}{HTML}{475569}
+\definecolor{blue}{HTML}{484878}
+\definecolor{red}{HTML}{B64342}
+\definecolor{green}{HTML}{166534}
+\setbeamercolor{normal text}{fg=ink,bg=white}
+\setbeamercolor{frametitle}{fg=ink,bg=white}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}{}
+\setbeamertemplate{headline}{}
+\setlength{\tabcolsep}{4.8pt}
+
+\begin{document}
+\begin{frame}[t]{Track B UNRATE: persistence beats richer ML}
+\vspace{-0.25em}
+{\small\color{muted} 24-month fixed input window $\cdot$ look-ahead $h \in \{1,3,6\}$ months $\cdot$ metric: mean absolute scaled error (MASE)}
+
+\vspace{0.8em}
+\begin{columns}[T,totalwidth=\textwidth]
+  \begin{column}{0.62\textwidth}
+    \includegraphics[width=\linewidth]{../figures/track_b_unrate_mase_nature.pdf}
+  \end{column}
+  \begin{column}{0.35\textwidth}
+    \textbf{Best rows}\\[-0.35em]
+    {\scriptsize Best model at each horizon, selected by lowest MASE. Errors are in unemployment-rate percentage points.}
+    \vspace{0.45em}
+
+    \resizebox{\linewidth}{!}{%
+    \begin{tabular}{@{}l r l r r r r@{}}
+    \toprule
+    Target & $h$ & Model & RMSE & MAE & MASE & $n$ \\
+    \midrule
+    UNRATE & 1 & Naive / Random Walk & 0.511 & 0.153 & 1.185 & 516 \\
+UNRATE & 3 & Naive / Random Walk & 0.865 & 0.313 & 2.424 & 516 \\
+UNRATE & 6 & ARD(6) & 1.398 & 0.486 & 3.774 & 516 \\
+    \bottomrule
+    \end{tabular}}
+
+    \vspace{1.0em}
+    \textbf{Interpretation.}\\[-0.2em]
+    {\small UNRATE levels are highly persistent. With interpretable Track B inputs, richer ML models do not beat the naive/ARD baselines.}
+
+    \vspace{0.8em}
+    {\scriptsize\color{muted} Track B: UNRATE level/delta, building permits, S\&P 500, consumer sentiment, and 10Y--3M yield spread level/delta.}
+  \end{column}
+\end{columns}
+
+\vfill
+{\tiny\color{muted} Source: \texttt{notebooks/03\_track\_b\_unrate\_fixed\_window\_mase.ipynb}; results: \texttt{results/track\_b\_unrate\_24m\_mase\_metrics.csv}.}
+\end{frame}
+\end{document}

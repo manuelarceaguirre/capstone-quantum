@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Track B UNRATE Forecasts — One Graph + One Table</title>
+<style>
+  :root {
+    --ink: #0f172a;
+    --muted: #475569;
+    --line: #cbd5e1;
+    --paper: #f8fafc;
+    --card: #ffffff;
+    --blue: #1d4ed8;
+    --green: #166534;
+    --red: #b91c1c;
+    --amber: #92400e;
+    --purple: #7c3aed;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #e2e8f0;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--ink);
+  }
+  .slide {
+    width: 1600px;
+    height: 900px;
+    margin: 24px auto;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+    padding: 52px 64px 40px;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 24px;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 16px;
+  }
+  h1 {
+    margin: 0;
+    font-size: 46px;
+    line-height: 1.04;
+    letter-spacing: -0.035em;
+  }
+  .subtitle {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 22px;
+  }
+  .badge {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 16px;
+    color: var(--blue);
+    border: 1.5px solid var(--blue);
+    padding: 10px 14px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  main {
+    display: grid;
+    grid-template-columns: 1.18fr 0.82fr;
+    gap: 26px;
+    min-height: 0;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 24px 26px;
+    min-height: 0;
+  }
+  h2 {
+    margin: 0 0 12px;
+    font-size: 27px;
+    letter-spacing: -0.02em;
+  }
+  .caption {
+    color: var(--muted);
+    font-size: 18px;
+    line-height: 1.25;
+    margin-bottom: 12px;
+  }
+  .graph-wrap { margin-top: 10px; }
+  svg text {
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  }
+  .legend {
+    display: flex;
+    gap: 20px;
+    margin: 10px 0 0 58px;
+    color: var(--muted);
+    font-size: 17px;
+    align-items: center;
+  }
+  .key { display: inline-flex; align-items: center; gap: 7px; }
+  .swatch { width: 22px; height: 4px; border-radius: 999px; display: inline-block; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 20px;
+    margin-top: 8px;
+  }
+  th, td {
+    padding: 12px 9px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+  }
+  td.num { text-align: right; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  .winner { color: var(--green); font-weight: 800; }
+  .callout {
+    margin-top: 18px;
+    padding: 18px 20px;
+    border-left: 6px solid var(--green);
+    background: #ecfdf5;
+    border-radius: 12px;
+    font-size: 22px;
+    line-height: 1.25;
+  }
+  .mini {
+    margin-top: 18px;
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.32;
+  }
+  .mini b { color: var(--ink); }
+  footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    color: var(--muted);
+    font-size: 16px;
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+  }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+</style>
+</head>
+<body>
+  <section class="slide">
+    <header>
+      <div>
+        <h1>Track B UNRATE: persistence beats richer ML</h1>
+        <div class="subtitle">2-year fixed input window · look-ahead h = 1, 3, 6 months · performance metric = MASE</div>
+      </div>
+      <div class="badge">One-slide result</div>
+    </header>
+
+    <main>
+      <div class="card">
+        <h2>Important graph: MASE by horizon</h2>
+        <div class="caption">Lower is better. The “Best ML” line is the best non-baseline ML model at each horizon.</div>
+        <div class="graph-wrap">
+          <svg width="900" height="500" viewBox="0 0 900 500" role="img" aria-label="MASE by forecast horizon">
+            <!-- chart area: left=80, top=30, width=700, height=380; y range 0 to 5 -->
+            <rect x="0" y="0" width="900" height="500" fill="#ffffff" />
+            <!-- gridlines and y labels -->
+            <g stroke="#e2e8f0" stroke-width="1">
+              <line x1="80" y1="410" x2="780" y2="410" />
+              <line x1="80" y1="334" x2="780" y2="334" />
+              <line x1="80" y1="258" x2="780" y2="258" />
+              <line x1="80" y1="182" x2="780" y2="182" />
+              <line x1="80" y1="106" x2="780" y2="106" />
+              <line x1="80" y1="30" x2="780" y2="30" />
+            </g>
+            <g fill="#64748b" font-size="15" text-anchor="end">
+              <text x="68" y="415">0</text>
+              <text x="68" y="339">1</text>
+              <text x="68" y="263">2</text>
+              <text x="68" y="187">3</text>
+              <text x="68" y="111">4</text>
+              <text x="68" y="35">5</text>
+            </g>
+            <text x="18" y="230" fill="#475569" font-size="16" transform="rotate(-90 18 230)">MASE</text>
+
+            <!-- axes -->
+            <line x1="80" y1="410" x2="780" y2="410" stroke="#0f172a" stroke-width="2" />
+            <line x1="80" y1="30" x2="80" y2="410" stroke="#0f172a" stroke-width="2" />
+
+            <!-- x positions: 180, 430, 680. y = 410 - value*76 -->
+            <!-- Naive: 1.185, 2.424, 4.020 -->
+            <polyline points="180,319.9 430,225.8 680,104.5" fill="none" stroke="#1d4ed8" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" />
+            <!-- ARD: 1.256, 2.440, 3.774 -->
+            <polyline points="180,314.5 430,224.6 680,123.2" fill="none" stroke="#166534" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" />
+            <!-- Best ML: 2.225, 2.920, 3.938 -->
+            <polyline points="180,240.9 430,188.0 680,110.7" fill="none" stroke="#b91c1c" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" />
+
+            <!-- points -->
+            <g stroke="#ffffff" stroke-width="3">
+              <circle cx="180" cy="319.9" r="8" fill="#1d4ed8" /><circle cx="430" cy="225.8" r="8" fill="#1d4ed8" /><circle cx="680" cy="104.5" r="8" fill="#1d4ed8" />
+              <circle cx="180" cy="314.5" r="8" fill="#166534" /><circle cx="430" cy="224.6" r="8" fill="#166534" /><circle cx="680" cy="123.2" r="8" fill="#166534" />
+              <circle cx="180" cy="240.9" r="8" fill="#b91c1c" /><circle cx="430" cy="188.0" r="8" fill="#b91c1c" /><circle cx="680" cy="110.7" r="8" fill="#b91c1c" />
+            </g>
+
+            <!-- x labels -->
+            <g fill="#0f172a" font-size="18" text-anchor="middle" font-weight="700">
+              <text x="180" y="448">1 month</text>
+              <text x="430" y="448">3 months</text>
+              <text x="680" y="448">6 months</text>
+            </g>
+            <text x="430" y="482" fill="#475569" font-size="16" text-anchor="middle">Forecast look-ahead horizon</text>
+
+            <!-- value labels -->
+            <g font-size="15" font-weight="700">
+              <text x="188" y="310" fill="#1d4ed8">1.19</text>
+              <text x="438" y="216" fill="#1d4ed8">2.42</text>
+              <text x="688" y="96" fill="#1d4ed8">4.02</text>
+              <text x="188" y="337" fill="#166534">1.26</text>
+              <text x="438" y="247" fill="#166534">2.44</text>
+              <text x="688" y="145" fill="#166534">3.77</text>
+              <text x="188" y="232" fill="#b91c1c">2.22</text>
+              <text x="438" y="180" fill="#b91c1c">2.92</text>
+              <text x="688" y="132" fill="#b91c1c">3.94</text>
+            </g>
+          </svg>
+          <div class="legend">
+            <span class="key"><span class="swatch" style="background:#1d4ed8"></span>Naive / Random Walk</span>
+            <span class="key"><span class="swatch" style="background:#166534"></span>ARD(6)</span>
+            <span class="key"><span class="swatch" style="background:#b91c1c"></span>Best ML</span>
+          </div>
+        </div>
+        <div class="callout"><b>Conclusion:</b> For UNRATE levels, the current value is already extremely informative. The 24-month Track B ML models do not beat the simple baselines.</div>
+      </div>
+
+      <div class="card">
+        <h2>One table: best result by horizon</h2>
+        <table>
+          <thead>
+            <tr><th>Horizon</th><th>Best model</th><th>MAE</th><th>MASE</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1 month</td><td class="winner">Naive / Random Walk</td><td class="num">0.153 pp</td><td class="num">1.185</td></tr>
+            <tr><td>3 months</td><td class="winner">Naive / Random Walk</td><td class="num">0.313 pp</td><td class="num">2.424</td></tr>
+            <tr><td>6 months</td><td class="winner">ARD(6)</td><td class="num">0.486 pp</td><td class="num">3.774</td></tr>
+          </tbody>
+        </table>
+        <div class="mini">
+          <p><b>Track B features:</b> UNRATE level/delta, building permits, S&amp;P 500, consumer sentiment, and 10Y–3M yield spread level/delta.</p>
+          <p><b>Why these features:</b> they combine labor-market persistence, housing-cycle signal, forward-looking financial conditions, and consumer expectations.</p>
+          <p><b>Assumption:</b> “2-year fixed window” means a 24-month input/history window, not a 24-month rolling training sample.</p>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div>Source: <code>notebooks/03_track_b_unrate_fixed_window_mase.ipynb</code></div>
+      <div>Metric file: <code>results/track_b_unrate_24m_mase_metrics.csv</code></div>
+    </footer>
+  </section>
+</body>
+</html>

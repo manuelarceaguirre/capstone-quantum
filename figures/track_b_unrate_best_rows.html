@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Best Rows — Track B UNRATE</title>
+<style>
+  :root {
+    --bg: #111315;
+    --ink: #d7d9dc;
+    --muted: #aeb4ba;
+    --rule: #3a3d40;
+    --accent: #f1f5f9;
+  }
+  body {
+    margin: 0;
+    background: #0b0d0f;
+    color: var(--ink);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  .wrap {
+    width: 1500px;
+    margin: 28px auto;
+    background: var(--bg);
+    padding: 38px 46px 42px;
+  }
+  h1 {
+    margin: 0;
+    font-size: 46px;
+    line-height: 1.05;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--accent);
+  }
+  .sub {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 19px;
+  }
+  .topline {
+    margin-top: 26px;
+    border-top: 2px solid var(--rule);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 34px;
+    font-size: 30px;
+  }
+  th {
+    text-align: left;
+    font-weight: 800;
+    color: var(--accent);
+    padding: 0 20px 20px 20px;
+    border-bottom: 2px solid #8b8f94;
+  }
+  td {
+    padding: 20px 20px;
+    border-bottom: 2px solid var(--rule);
+    color: var(--ink);
+    font-weight: 500;
+  }
+  td.num, th.num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .note {
+    margin-top: 22px;
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.35;
+  }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+</style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>Best Rows</h1>
+    <div class="sub">Track B UNRATE · 24-month fixed input window · best model selected by lowest MASE at each look-ahead horizon</div>
+    <div class="topline"></div>
+    <table>
+      <thead>
+        <tr>
+          <th>target</th>
+          <th class="num">horizon</th>
+          <th>model</th>
+          <th class="num">rmse</th>
+          <th class="num">mae</th>
+          <th class="num">mase</th>
+          <th class="num">n_predictions</th>
+          <th class="num">window_months</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>UNRATE</td>
+          <td class="num">1</td>
+          <td>Naive / Random Walk</td>
+          <td class="num">0.510908</td>
+          <td class="num">0.153295</td>
+          <td class="num">1.185043</td>
+          <td class="num">516</td>
+          <td class="num">24</td>
+        </tr>
+        <tr>
+          <td>UNRATE</td>
+          <td class="num">3</td>
+          <td>Naive / Random Walk</td>
+          <td class="num">0.864626</td>
+          <td class="num">0.312597</td>
+          <td class="num">2.423900</td>
+          <td class="num">516</td>
+          <td class="num">24</td>
+        </tr>
+        <tr>
+          <td>UNRATE</td>
+          <td class="num">6</td>
+          <td>ARD(6)</td>
+          <td class="num">1.398178</td>
+          <td class="num">0.486005</td>
+          <td class="num">3.773696</td>
+          <td class="num">516</td>
+          <td class="num">24</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note">
+      RMSE and MAE are in unemployment-rate percentage points. MASE uses the in-fold mean absolute one-step change in UNRATE level as scale. Classical models have no <code>mean_best_epoch</code>, so the table reports the fixed input-window length instead.
+    </div>
+  </main>
+</body>
+</html>
