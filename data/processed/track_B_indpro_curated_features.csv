@@ -1,0 +1,11 @@
+feature,kind,source,reason,evidence
+INDPRO_level,level,INDPRO,Current industrial production level captures persistence and business-cycle state.,"fed_ip_methodology, stock_watson_diffusion"
+INDPRO_growth,stationary,INDPRO,Recent IP growth captures production momentum.,fed_ip_methodology
+IPMANSICS,stationary,IPMANSICS,Manufacturing IP is a major component of aggregate industrial production.,fed_ip_methodology
+CUMFNS,stationary,CUMFNS,Capacity utilization measures output relative to sustainable capacity and is directly tied to industrial activity.,fed_capacity_utilization
+AWHMAN,stationary,AWHMAN,Average weekly hours in manufacturing are used as an LEI component and production-worker hours are an input to some Fed IP estimates.,"conference_board_lei, fed_ip_methodology"
+AMDMNOx,stationary,AMDMNOx,Manufacturers' new orders proxy forward production demand and are an LEI component.,conference_board_lei
+CMRMTSPLx,stationary,CMRMTSPLx,Real manufacturing and trade sales are part of coincident business-cycle conditions and demand for production.,conference_board_lei
+PERMIT,stationary,PERMIT,Building permits lead construction-related materials and durable-goods demand.,conference_board_lei
+S&P 500,stationary,S&P 500,Stock prices summarize forward-looking financial expectations for activity and demand.,conference_board_lei
+T10Y3M_level,derived_spread_level,"GS10, TB3MS","Term spread summarizes monetary/financial conditions relevant for investment, goods demand, and production cycles.",conference_board_lei

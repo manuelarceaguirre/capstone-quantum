@@ -1,0 +1,184 @@
+{
+  "version": "2026-05-14",
+  "purpose": "Small, source-justified predictor sets for fixed-window macro forecasting experiments.",
+  "notes": [
+    "Columns with *_level come from data/processed/levels_panel.parquet.",
+    "Columns with *_delta or macro mnemonics generally come from data/processed/stationary_panel.parquet unless marked derived.",
+    "T10Y3M_level is derived as GS10 - TB3MS from levels_panel.parquet; T10Y3M_delta is its first difference.",
+    "These feature sets are intentionally small and defensible, not automatically optimized."
+  ],
+  "sources": {
+    "conference_board_lei": {
+      "title": "The Conference Board Leading Economic Index for the US",
+      "url": "https://www.conference-board.org/topics/us-leading-indicators/",
+      "relevance": "Lists leading indicators such as manufacturing hours, initial claims, new orders, building permits, stock prices, interest-rate spread, and consumer expectations."
+    },
+    "fed_ip_methodology": {
+      "title": "Federal Reserve Industrial Production and Capacity Utilization Methodology",
+      "url": "https://www.federalreserve.gov/releases/g17/Meth/MethIP.htm",
+      "relevance": "Explains that IP uses monthly production indicators and, when physical output is unavailable, input measures such as production-worker hours."
+    },
+    "fed_capacity_utilization": {
+      "title": "Federal Reserve Capacity Utilization Notes",
+      "url": "https://www.federalreserve.gov/RELEASES/g17/CapNotes.htm",
+      "relevance": "Defines capacity utilization as output relative to sustainable maximum output, closely tied to industrial activity."
+    },
+    "stock_watson_diffusion": {
+      "title": "Stock and Watson (2002), Macroeconomic Forecasting Using Diffusion Indexes",
+      "url": "https://ideas.repec.org/a/bes/jnlbes/v20y2002i2p147-62.html",
+      "relevance": "Justifies using broad monthly macro panels and reduced predictor sets/factors for macro forecasting."
+    },
+    "rba_labor_indicators": {
+      "title": "RBA Bulletin: How Useful are Leading Labour Market Indicators at Forecasting the Unemployment Rate?",
+      "url": "https://www.rba.gov.au/publications/bulletin/2025/apr/how-useful-are-leading-labour-market-indicators-at-forecasting-the-unemployment-rate.html",
+      "relevance": "Motivates leading labor-market indicators for unemployment-rate forecasts."
+    }
+  },
+  "feature_sets": {
+    "UNRATE": {
+      "target_description": "Civilian unemployment rate",
+      "recommended_horizons": [1, 3, 6],
+      "features": [
+        {
+          "name": "UNRATE_level",
+          "kind": "level",
+          "source_column": "UNRATE",
+          "reason": "Current unemployment level captures strong persistence in unemployment-rate forecasts.",
+          "evidence": ["rba_labor_indicators"]
+        },
+        {
+          "name": "UNRATE_delta",
+          "kind": "stationary",
+          "source_column": "UNRATE",
+          "reason": "Recent month-to-month unemployment change captures labor-market momentum.",
+          "evidence": ["rba_labor_indicators"]
+        },
+        {
+          "name": "CLAIMSx",
+          "kind": "stationary",
+          "source_column": "CLAIMSx",
+          "reason": "Initial unemployment claims are a direct leading labor-market stress indicator and an LEI component.",
+          "evidence": ["conference_board_lei", "rba_labor_indicators"]
+        },
+        {
+          "name": "HWIURATIO",
+          "kind": "stationary",
+          "source_column": "HWIURATIO",
+          "reason": "Help-wanted to unemployed ratio proxies labor demand relative to available workers.",
+          "evidence": ["rba_labor_indicators"]
+        },
+        {
+          "name": "PAYEMS",
+          "kind": "stationary",
+          "source_column": "PAYEMS",
+          "reason": "Payroll employment growth is a coincident labor-market condition and helps anchor unemployment movements.",
+          "evidence": ["conference_board_lei"]
+        },
+        {
+          "name": "PERMIT",
+          "kind": "stationary",
+          "source_column": "PERMIT",
+          "reason": "Building permits are a cyclical leading indicator; weaker housing activity can precede weaker labor demand.",
+          "evidence": ["conference_board_lei"]
+        },
+        {
+          "name": "S&P 500",
+          "kind": "stationary",
+          "source_column": "S&P 500",
+          "reason": "Stock prices summarize forward-looking expectations and are an LEI component.",
+          "evidence": ["conference_board_lei"]
+        },
+        {
+          "name": "T10Y3M_level",
+          "kind": "derived_spread_level",
+          "source_columns": ["GS10", "TB3MS"],
+          "reason": "Yield-curve slope is a business-cycle leading indicator; inversions often precede unemployment deterioration.",
+          "evidence": ["conference_board_lei"]
+        },
+        {
+          "name": "UMCSENTx",
+          "kind": "stationary",
+          "source_column": "UMCSENTx",
+          "reason": "Consumer expectations are an LEI component and can anticipate spending/hiring weakness.",
+          "evidence": ["conference_board_lei"]
+        }
+      ]
+    },
+    "INDPRO": {
+      "target_description": "Industrial production index",
+      "recommended_horizons": [1, 3, 6, 12],
+      "features": [
+        {
+          "name": "INDPRO_level",
+          "kind": "level",
+          "source_column": "INDPRO",
+          "reason": "Current industrial production level captures persistence and business-cycle state.",
+          "evidence": ["fed_ip_methodology", "stock_watson_diffusion"]
+        },
+        {
+          "name": "INDPRO_growth",
+          "kind": "stationary",
+          "source_column": "INDPRO",
+          "reason": "Recent IP growth captures production momentum.",
+          "evidence": ["fed_ip_methodology"]
+        },
+        {
+          "name": "IPMANSICS",
+          "kind": "stationary",
+          "source_column": "IPMANSICS",
+          "reason": "Manufacturing IP is a major component of aggregate industrial production.",
+          "evidence": ["fed_ip_methodology"]
+        },
+        {
+          "name": "CUMFNS",
+          "kind": "stationary",
+          "source_column": "CUMFNS",
+          "reason": "Capacity utilization measures output relative to sustainable capacity and is directly tied to industrial activity.",
+          "evidence": ["fed_capacity_utilization"]
+        },
+        {
+          "name": "AWHMAN",
+          "kind": "stationary",
+          "source_column": "AWHMAN",
+          "reason": "Average weekly hours in manufacturing are used as an LEI component and production-worker hours are an input to some Fed IP estimates.",
+          "evidence": ["conference_board_lei", "fed_ip_methodology"]
+        },
+        {
+          "name": "AMDMNOx",
+          "kind": "stationary",
+          "source_column": "AMDMNOx",
+          "reason": "Manufacturers' new orders proxy forward production demand and are an LEI component.",
+          "evidence": ["conference_board_lei"]
+        },
+        {
+          "name": "CMRMTSPLx",
+          "kind": "stationary",
+          "source_column": "CMRMTSPLx",
+          "reason": "Real manufacturing and trade sales are part of coincident business-cycle conditions and demand for production.",
+          "evidence": ["conference_board_lei"]
+        },
+        {
+          "name": "PERMIT",
+          "kind": "stationary",
+          "source_column": "PERMIT",
+          "reason": "Building permits lead construction-related materials and durable-goods demand.",
+          "evidence": ["conference_board_lei"]
+        },
+        {
+          "name": "S&P 500",
+          "kind": "stationary",
+          "source_column": "S&P 500",
+          "reason": "Stock prices summarize forward-looking financial expectations for activity and demand.",
+          "evidence": ["conference_board_lei"]
+        },
+        {
+          "name": "T10Y3M_level",
+          "kind": "derived_spread_level",
+          "source_columns": ["GS10", "TB3MS"],
+          "reason": "Term spread summarizes monetary/financial conditions relevant for investment, goods demand, and production cycles.",
+          "evidence": ["conference_board_lei"]
+        }
+      ]
+    }
+  }
+}

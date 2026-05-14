@@ -1,0 +1,10 @@
+feature,kind,source,reason,evidence
+UNRATE_level,level,UNRATE,Current unemployment level captures strong persistence in unemployment-rate forecasts.,rba_labor_indicators
+UNRATE_delta,stationary,UNRATE,Recent month-to-month unemployment change captures labor-market momentum.,rba_labor_indicators
+CLAIMSx,stationary,CLAIMSx,Initial unemployment claims are a direct leading labor-market stress indicator and an LEI component.,"conference_board_lei, rba_labor_indicators"
+HWIURATIO,stationary,HWIURATIO,Help-wanted to unemployed ratio proxies labor demand relative to available workers.,rba_labor_indicators
+PAYEMS,stationary,PAYEMS,Payroll employment growth is a coincident labor-market condition and helps anchor unemployment movements.,conference_board_lei
+PERMIT,stationary,PERMIT,Building permits are a cyclical leading indicator; weaker housing activity can precede weaker labor demand.,conference_board_lei
+S&P 500,stationary,S&P 500,Stock prices summarize forward-looking expectations and are an LEI component.,conference_board_lei
+T10Y3M_level,derived_spread_level,"GS10, TB3MS",Yield-curve slope is a business-cycle leading indicator; inversions often precede unemployment deterioration.,conference_board_lei
+UMCSENTx,stationary,UMCSENTx,Consumer expectations are an LEI component and can anticipate spending/hiring weakness.,conference_board_lei
