@@ -33,7 +33,20 @@ https://www.moodys.com/web/en/us/about/what-we-do/quantum-computing/recession-pr
 # goals
 1. Everyone on Thursday - Wrap each model in a function that imports a train + test dataframe, then outputs predictions and dates.
 1. David - A standard notebook that loops through data tracks, target variables, forecast horizons and poos train test splits. Then saves the performance metrics of y_pred for each of these problems in a standardized format.
-2. Jack - Compile list of performance metrics and curated features for each target variable. Because we have relatively little data, I doubt the execution of the actual metrics will be a bottleneck
+2. ```python
+   error_metric_df = pd.DataFrame(columns = ['model', 'track', 'forecast_horizon', 'target_variable', 'MSE', 'MAE', ]
+   for track in track_list
+      for forecast_horizon in forcast_horizon_list:
+          for target_variable in target_variable_list:
+              
+              for student_made_model in student_made_model_list:
+                data  =  ...
+                train, test = traintestsplit()
+                train_sequences = generate_rolling_window_indices(window_lenght, len(train)
+                test_sequences = generate_rolling_window_indices(window_lenght, len(train)
+                y_preds, y_test = student_made_model(train, test, train_sequences, test_sequnces)
+              
+5. Jack - Compile list of performance metrics and curated features for each target variable. Because we have relatively little data, I doubt the execution of the actual metrics will be a bottleneck
   - I vote we use this library, and the metrics that are listed in the top bullet point section: https://skforecast.org/latest/user_guides/metrics
   - Mean Squared Error (mean_squared_error)
   - Mean Absolute Error (mean_absolute_error)
