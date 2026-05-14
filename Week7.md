@@ -45,6 +45,12 @@ https://www.moodys.com/web/en/us/about/what-we-do/quantum-computing/recession-pr
   - Root Mean Squared Scaled Error (root_mean_squared_scaled_error)
 3. Manuel - Find a source to justify the choice of a curated set of predictors for unemployment and industrial production. Aiming for a small number (6-10), can be the current track b or a different set. The important thing is that we have evidence and
 a defendible reason behind it.
+   - `docs/curated_features_unrate_indpro.md` — sourced justification for UNRATE and INDPRO curated predictors.
+   - `configs/curated_feature_sets.json` — machine-readable feature lists and source links.
+   - `data/processed/track_B_unrate_curated.parquet` — curated UNRATE predictor panel.
+   - `data/processed/track_B_indpro_curated.parquet` — curated INDPRO predictor panel.
+   - `src/classical_utils/curated_features.py` — helper to build the curated panels.
+   - `src/classical_utils/model_wrappers.py` and `src/classical_utils/metrics.py` — train/test model wrappers and Week7 metric helpers.
 4. William - Find a source to justify the choice of a curated set of predictors for CPI and Inflation. Aiming for a small number (6-10). The important thing is that we have evidence and
 a defendible reason behind it.
 
