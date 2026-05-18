@@ -136,6 +136,8 @@ With the substrate in place, the project continues in three parallel notebooks
 - `02_classical_baseline.ipynb` — Elastic net / random forest / XGBoost / factor
   models on Tracks A/B/C/D. Produces the benchmark numbers every quantum variant
   must beat.
+- `02b_rnn_gru.ipynb` / `scripts/run_rnn_gru_benchmark.py` — William's fixed-window
+  recurrent benchmark lane using RNN and GRU sequence models on Track B or D-mini.
 - `03_qrc.ipynb` — Quantum Reservoir Computing wired to Track D-mini (Qiskit Aer
   for local simulation, IBM Quantum processors via BMO's instance for final runs).
 - `04_qsk.ipynb` — Quantum Signature Kernel on the Track B path tensor.
