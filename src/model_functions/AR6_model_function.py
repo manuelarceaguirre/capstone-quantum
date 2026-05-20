@@ -1,20 +1,19 @@
-import numpy as np
 from statsmodels.tsa.ar_model import AutoReg
+import numpy as np
 
 
-def AR6_model_function(train_df, test_df, target_col):
+# --- AR(6) forecasting model ---
+def AR6_model_function(train_df, test_df, y_train):
     """
-    Autoregressive (AR) forecasting model using
+    Autoregressive forecasting model usin
     the previous 6 observations as lags.
 
     Parameters
     ----------
     train_df : pd.DataFrame
     test_df : pd.DataFrame
-    target_col : str
-        Target column to forecast.
-    horizon : int
-        Forecast horizon (kept for interface compatibility).
+    target_col : pd.Series
+        Full target series aligned to dataset index.
 
     Returns
     -------
@@ -23,9 +22,9 @@ def AR6_model_function(train_df, test_df, target_col):
     """
 
     # ---------------------------------------------
-    # Extract training series
+    # Training target aligned to train set
     # ---------------------------------------------
-    y_train = train_df[target_col]
+    y_train = target_col.loc[train_df.index]
 
     # ---------------------------------------------
     # Fit AR(6) model

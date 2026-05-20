@@ -1,21 +1,17 @@
-import numpy as np
-
-
+# --- Random walk / naive persistence model ---
 def random_walk_model_function(train_df, test_df, target_col):
     """
-    Random walk forecast without drift.
+    Naive persistence forecast.
 
-    Forecasts every future value as the final observed
-    value from the training set.
+    Predicts each observation using the previous
+    observed value from the target series.
 
     Parameters
     ----------
     train_df : pd.DataFrame
     test_df : pd.DataFrame
-    target_col : str
-        Target column to forecast.
-    horizon : int
-        Forecast horizon (kept for interface compatibility).
+    target_col : pd.Series
+        Full target series aligned to dataset index.
 
     Returns
     -------
@@ -23,15 +19,7 @@ def random_walk_model_function(train_df, test_df, target_col):
     dates : pd.Index
     """
 
-    # ---------------------------------------------
-    # Last observed training value
-    # ---------------------------------------------
-    last_value = train_df[target_col].iloc[-1]
-
-    # ---------------------------------------------
-    # Forecast
-    # ---------------------------------------------
-    preds = np.repeat(last_value, len(test_df))
+    preds = target_col.shift(1).loc[test_df.index].values
 
     dates = test_df.index
 
