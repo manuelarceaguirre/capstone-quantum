@@ -5,6 +5,7 @@ __pycache__/
 .venv/
 .env
 *.swp
+docs/·
 
 # Large or transient artifacts we regenerate
 *.log

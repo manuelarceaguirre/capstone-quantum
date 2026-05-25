@@ -9,6 +9,7 @@ from .manuel_konduri_functions import (
     svr_linear_di_model_function,
     xgboost_di_model_function,
 )
+from .william_rnn_gru_functions import gru_model_function, rnn_model_function
 
 __all__ = [
     "HAS_XGB",
@@ -18,4 +19,6 @@ __all__ = [
     "knn_di_model_function",
     "svr_linear_di_model_function",
     "xgboost_di_model_function",
+    "rnn_model_function",
+    "gru_model_function",
 ]
