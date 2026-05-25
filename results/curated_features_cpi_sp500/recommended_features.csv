@@ -1,0 +1,11 @@
+feature,mean_rank_score,max_lasso_frequency,description
+CPIAUCSL,0.5517418032786886,0.48717948717948717,Headline CPI inflation momentum; direct inflation persistence signal.
+PCEPI,0.4168374316939891,0.48717948717948717,Alternative broad consumption price index; cross-checks CPI with a Fed-relevant price concept.
+PPICMM,0.4117144808743169,0.7692307692307693,Producer-price commodity pressure; upstream cost signal before consumer-price pass-through.
+OILPRICEx,0.5406420765027322,0.8717948717948718,Energy-price shock channel; important for headline inflation and equity discount/cost pressure.
+FEDFUNDS,0.6852800546448088,0.5641025641025641,"Monetary-policy stance; affects demand, inflation expectations, discount rates, and asset prices."
+T10YFFM,0.6591530054644809,0.07692307692307693,Long-rate minus fed funds spread; captures term-structure expectations and policy tightness.
+UNRATE,0.43920765027322406,0.358974358974359,Labor-market slack; Phillips-curve style demand pressure and recession-risk proxy.
+PERMIT,0.5556693989071039,0.05128205128205128,Forward-looking housing cycle; interest-sensitive demand and wealth channel.
+S&P PE ratio,0.5551571038251366,0.48717948717948717,Equity valuation signal; connects earnings expectations and discount-rate pressure.
+VIXCLSx,0.6506147540983607,0.46153846153846156,Equity-market risk/uncertainty proxy; forward-looking financial-stress signal.
