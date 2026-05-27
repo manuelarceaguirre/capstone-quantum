@@ -1,5 +1,7 @@
 # --- Random walk / naive persistence model ---
-def random_walk_model_function(train_df, test_df, target_col):
+import pandas as pd
+
+def random_walk_model_function(train_df, test_df, y_train, horizon):
     """
     Naive persistence forecast.
 
@@ -10,17 +12,16 @@ def random_walk_model_function(train_df, test_df, target_col):
     ----------
     train_df : pd.DataFrame
     test_df : pd.DataFrame
-    target_col : pd.Series
-        Full target series aligned to dataset index.
+    y_train : pd.Series
+        Target series from training window.
+    horizon : int
+        Forecast horizon in periods.
 
     Returns
     -------
-    preds : np.ndarray
-    dates : pd.Index
+    pd.Series with predictions indexed by test_df.index
     """
 
-    preds = target_col.shift(1).loc[test_df.index].values
+    preds = y_train.shift(horizon-1).iloc[-1]
 
-    dates = test_df.index
-
-    return preds, dates
+    return pd.Series(preds, index=test_df.index)

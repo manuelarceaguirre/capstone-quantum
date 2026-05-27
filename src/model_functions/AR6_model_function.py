@@ -1,50 +1,38 @@
-from statsmodels.tsa.ar_model import AutoReg
 import numpy as np
+import pandas as pd
+import warnings
+from statsmodels.tsa.ar_model import AutoReg
 
 
-# --- AR(6) forecasting model ---
-def AR6_model_function(train_df, test_df, y_train):
+def AR6_model_function(train_df, test_df, y_train, horizon):
     """
-    Autoregressive forecasting model usin
-    the previous 6 observations as lags.
+    Fits an AR(6) model using statsmodels AutoReg and forecasts horizon steps ahead.
 
     Parameters
     ----------
     train_df : pd.DataFrame
+        Training features (unused, kept for interface consistency).
     test_df : pd.DataFrame
-    target_col : pd.Series
-        Full target series aligned to dataset index.
+        Test features (used for index alignment).
+    y_train : pd.Series
+        Training target series.
+    horizon : int
+        Forecast horizon.
 
     Returns
     -------
-    preds : np.ndarray
-    dates : pd.Index
+    pd.Series
+        Forecasts indexed by test_df.index
     """
+    # --- preprocessing (same as your ARIMA version) ---
+    y = y_train.shift(horizon - 1).dropna()
+    y.index = pd.to_datetime(y.index) 
+    y = y.asfreq('MS')
 
-    # ---------------------------------------------
-    # Training target aligned to train set
-    # ---------------------------------------------
-    y_train = target_col.loc[train_df.index]
+    # --- fit AR(6) model ---
+    model = AutoReg(y, lags=6, old_names=False).fit()
 
-    # ---------------------------------------------
-    # Fit AR(6) model
-    # ---------------------------------------------
-    model = AutoReg(
-        y_train,
-        lags=6,
-        old_names=False
-    ).fit()
+    # --- direct multi-step forecast ---
+    preds = model.model.predict(model.params, start=len(y), end=len(train_df) + len(test_df))
 
-    # ---------------------------------------------
-    # Forecast
-    # ---------------------------------------------
-    preds = model.predict(
-        start=len(y_train),
-        end=len(y_train) + len(test_df) - 1
-    )
-
-    preds = np.array(preds)
-
-    dates = test_df.index
-
-    return preds, dates
+    return pd.Series(preds, index=test_df.index).iloc[:len(test_df)]

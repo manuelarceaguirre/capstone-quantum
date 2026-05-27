@@ -1,51 +1,28 @@
-from pmdarima import auto_arima
 import numpy as np
+import pandas as pd
+import warnings
+from pmdarima import auto_arima
 
 
-# --- Auto-ARIMA forecasting model ---
-def arima_model_function(train_df, test_df, target_col):
+def arima_model_function(train_df, test_df, y_train, horizon):
     """
-    Fits an Auto-ARIMA model on the training
-    target series and forecasts over the test period.
-
-    Parameters
-    ----------
-    train_df : pd.DataFrame
-    test_df : pd.DataFrame
-    target_col : pd.Series
-        Full target series aligned to dataset index.
-
-    Returns
-    -------
-    preds : np.ndarray
-    dates : pd.Index
+    Fits Auto-ARIMA once on training data and forecasts horizon steps ahead.
+    No recursive refitting.
     """
+    y = y_train.shift(horizon - 1).dropna()
+    y.index = pd.to_datetime(y.index) 
+    y = y.asfreq('MS')
+    # --- single fit ---
+    model=auto_arima(y,start_p=0,d=1,start_q=0,
+        max_p=5,max_d=5,max_q=5, start_P=0,
+        D=1, start_Q=0, max_P=5,max_D=5,
+        max_Q=5, m=12, seasonal=False,
+        error_action='warn',
+        supress_warnings=True,
+        random_state=20,n_fits=50)
 
-    # ---------------------------------------------
-    # Training target aligned to train set
-    # ---------------------------------------------
-    y_train = target_col.loc[train_df.index]
+    # --- direct multi-step forecast ---
+    n_periods=(horizon+len(test_df))
+    prediction = pd.DataFrame(model.predict(n_periods = n_periods),index=test_df.index)
 
-    # ---------------------------------------------
-    # Fit Auto-ARIMA
-    # ---------------------------------------------
-    model = auto_arima(
-        y_train,
-        seasonal=False,
-        stepwise=True,
-        suppress_warnings=True,
-        error_action="ignore"
-    )
-
-    # ---------------------------------------------
-    # Forecast
-    # ---------------------------------------------
-    preds = model.predict(
-        n_periods=len(test_df)
-    )
-
-    preds = np.array(preds)
-
-    dates = test_df.index
-
-    return preds, dates
+    return prediction.iloc[-len(test_df):, 0]
