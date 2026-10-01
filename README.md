@@ -140,6 +140,25 @@ With the substrate in place, the project continues in three parallel notebooks
   for local simulation, IBM Quantum processors via BMO's instance for final runs).
 - `04_qsk.ipynb` — Quantum Signature Kernel on the Track B path tensor.
 
+## Reproducible classical benchmark
+
+To move the repo from "data-ready" to "comparison-ready", use the benchmark runner
+in `scripts/run_classical_benchmark.py`. It rebuilds Track C / D / D-mini inside
+each training fold to avoid leakage and scores pooled out-of-sample predictions.
+
+```bash
+python3 scripts/run_classical_benchmark.py
+```
+
+Quick starter run focused on the two most relevant near-term tracks:
+
+```bash
+python3 scripts/run_classical_benchmark.py \
+  --tracks B D-mini \
+  --horizons 1 3 \
+  --outdir results/classical_benchmark_quick
+```
+
 ## References
 
 - McCracken, M. & Ng, S. (2016). *FRED-MD: A Monthly Database for Macroeconomic

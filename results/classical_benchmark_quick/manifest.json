@@ -1,0 +1,14 @@
+{
+  "tracks": [
+    "B",
+    "D-mini"
+  ],
+  "horizons": [
+    1,
+    3
+  ],
+  "include_trees": false,
+  "folds_used": 39,
+  "seed": 42,
+  "data_vintage": "2026-03-MD.csv"
+}
