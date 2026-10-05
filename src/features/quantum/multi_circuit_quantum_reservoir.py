@@ -4,8 +4,8 @@ import pandas as pd
 import numpy as np
 from typing import List
 
-from src.quantum_utils.encoding_strategy.encoding_strategy import encoding_strategy
-from src.quantum_utils.result_getters.result_getter import result_getter
+from src.features.quantum.encoding_strategy.encoding_strategy import encoding_strategy
+from src.features.quantum.result_getters.result_getter import result_getter
 
 
 def multi_circuit_quantum_reservoir(data : pd.DataFrame,

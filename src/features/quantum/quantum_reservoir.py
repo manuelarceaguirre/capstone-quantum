@@ -6,8 +6,8 @@ from qiskit.quantum_info import SparsePauliOp
 import pandas as pd
 from typing import List
 
-from src.quantum_utils.encoding_strategy.encoding_strategy import encoding_strategy
-from src.quantum_utils.result_getters.result_getter import result_getter
+from src.features.quantum.encoding_strategy.encoding_strategy import encoding_strategy
+from src.features.quantum.result_getters.result_getter import result_getter
 
 
 def quantum_reservoir(data : pd.DataFrame,

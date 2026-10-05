@@ -7,7 +7,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data" / "processed"
 
-# Track B target-specific files for Jack's multi-file evaluator.
+# Track B: one curated predictor set per target (TRACK_CONFIG["B"] in the evaluation notebook).
 # Columns are selected from track_A_full.parquet so names and transformations
 # match Track A exactly; only the number of predictors is curated/smaller.
 FEATURE_SETS = {
