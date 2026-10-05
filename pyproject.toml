@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "capstone-quantum"
+version = "0.1.0"
+description = "Benchmarking classical and quantum-feature models for FRED-MD macro forecasting"
+requires-python = ">=3.11"
+
+[tool.setuptools.packages.find]
+include = ["src*"]
