@@ -1,7 +1,7 @@
 from qiskit_aer import AerSimulator
 from qiskit_ibm_runtime import Estimator
 from qiskit import QuantumCircuit, transpile
-from qiskit.quantum_info import SparsePauliOp, Statevector
+from qiskit.quantum_info import DensityMatrix, SparsePauliOp, Statevector
 
 import numpy as np
 from math import comb, exp
@@ -236,7 +236,13 @@ class pce_result_getter(result_getter):
 
                 # Bind parameters to the circuit.
                 bound = circ.assign_parameters(params, inplace=False)
-                psi = Statevector.from_instruction(bound)
+                # Statevector applies reset as a random projective measurement, so
+                # circuits with mid-circuit resets (reservoirs) need a density matrix
+                # to give exact, deterministic expectation values.
+                if "reset" in bound.count_ops():
+                    psi = DensityMatrix.from_instruction(bound)
+                else:
+                    psi = Statevector.from_instruction(bound)
 
                 # Compute expectation value for every Pauli observable.
                 for op in self.ops:

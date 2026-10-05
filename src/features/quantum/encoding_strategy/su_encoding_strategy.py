@@ -38,7 +38,8 @@ class su_encoding_strategy(encoding_strategy):
                  n_qubits: int = None,
                  reps: int = 1,
                  su2_gates: List[str] = ['ry', 'rx'],
-                 entanglement: str = 'full'):
+                 entanglement: str = 'full',
+                 scale: bool = True):
         """
         Initialize the unitary encoding strategy. The maximum number of features that can be
         encoded is determined by the number of parameters in the EfficientSU2 circuit, which
@@ -68,12 +69,18 @@ class su_encoding_strategy(encoding_strategy):
             - 'linear'
             - 'circular'
 
+        scale : bool, default=True
+            If True, min-max scale each batch passed to generate_pubs (statistics
+            come from that batch). Set False when the data is already scaled to
+            [0, 1], e.g. with causal statistics to avoid look-ahead.
+
         """
 
         self.n_qubits = n_qubits
         self.reps = reps
         self.su_2_gates = su2_gates
         self.entanglement = entanglement
+        self.scale = scale
 
     def generate_pubs(
         self,
@@ -130,7 +137,10 @@ class su_encoding_strategy(encoding_strategy):
         )
 
         # Scale input data into the interval [0, 1].
-        scaled_data = MinMaxScaler().fit_transform(data.values)
+        if self.scale:
+            scaled_data = MinMaxScaler().fit_transform(data.values)
+        else:
+            scaled_data = np.asarray(data.values, dtype=float)
 
         # Rescale normalized values into angular encoding range [0, 2π].
         scaled_data = 2 * np.pi * scaled_data

@@ -8,3 +8,6 @@ __pycache__/
 
 # Large or transient artifacts we regenerate
 *.log
+
+# pip install -e . metadata
+*.egg-info/
