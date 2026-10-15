@@ -17,6 +17,16 @@ def target_col(target, horizon):
     return f"y_{target}_h{horizon}"
 
 
+def _fmt_duration(seconds):
+    """Format seconds as e.g. '45s', '4m12s', '2h05m'."""
+    seconds = int(round(seconds))
+    if seconds < 60:
+        return f"{seconds}s"
+    if seconds < 3600:
+        return f"{seconds // 60}m{seconds % 60:02d}s"
+    return f"{seconds // 3600}h{seconds % 3600 // 60:02d}m"
+
+
 def run_evaluation(
     folds,
     tracks,
@@ -69,11 +79,19 @@ def run_evaluation(
     results = []
     total_runs = len(folds) * len(tracks) * len(targets) * len(horizons) * len(models)
     completed = 0
+    skipped = 0  # runs already on disk (resume), excluded from the ETA
+    fold_ids = {fold["fold_id"] for fold in folds}
+    t_start = time.time()
 
     for track_name in tracks:
         done = completed_runs(results_dir, models, track_name) if resume else set()
         if done:
             print(f"  Track {track_name}: resuming, {len(done)} runs already on disk will be skipped")
+            skipped += sum(
+                1 for model_name, target, horizon, fold_id in done
+                if model_name in models and target in targets
+                and horizon in horizons and fold_id in fold_ids
+            )
         pending = []  # rows computed since the last checkpoint
 
         for i, fold in enumerate(folds, 1):
@@ -137,7 +155,14 @@ def run_evaluation(
                         pending.append(row)
                         completed += 1
                         if progress_every and completed % progress_every == 0:
-                            print(f"  {completed}/{total_runs} runs complete")
+                            elapsed = time.time() - t_start
+                            remaining = max(total_runs - skipped - completed, 0)
+                            eta = elapsed / completed * remaining
+                            print(
+                                f"  {completed + skipped}/{total_runs} runs complete"
+                                f" · {_fmt_duration(elapsed)} elapsed"
+                                f" · ~{_fmt_duration(eta)} left"
+                            )
 
             # checkpoint every few folds and at the end of the track, so a crash
             # loses at most checkpoint_every folds of work
@@ -147,7 +172,7 @@ def run_evaluation(
                 pending = []
         results.extend(pending)
 
-    print(f"Loop complete. Total rows: {len(results)}")
+    print(f"Loop complete. Total rows: {len(results)} in {_fmt_duration(time.time() - t_start)}")
     return pd.DataFrame(results)
 
 
