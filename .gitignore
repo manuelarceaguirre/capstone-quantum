@@ -9,5 +9,9 @@ __pycache__/
 # Large or transient artifacts we regenerate
 *.log
 
+# result-store lock and in-progress files (src/evaluation/store.py)
+*.lock
+*.tmp
+
 # pip install -e . metadata
 *.egg-info/

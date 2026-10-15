@@ -26,7 +26,7 @@ FRED-MD ──01_data_prep──▶ data/processed/ ──┐
    PCA) and quantum tracks (reservoir embeddings) are interchangeable.
 2. **Models** are plain functions with a single signature. They never see folds or test targets.
 3. **The evaluation loop** iterates folds × tracks × targets × horizons × models, computes
-   metrics, and writes one parquet per model.
+   metrics, and merges the runs into one parquet per (model, track).
 
 ## Layout
 
@@ -46,7 +46,7 @@ capstone-quantum/
 │   ├── evaluation/                   folds, track prep, metrics, loop
 │   ├── models/                       model functions + MODEL_REGISTRY
 │   └── features/quantum/             encoding strategies, result getters, reservoirs
-└── results/                          <model>_raw.parquet, summary_disaggregated.csv
+└── results/                          raw/<model>/<track>.parquet, summary_disaggregated.csv
 ```
 
 ## Setup
@@ -72,6 +72,29 @@ python scripts/build_quantum_tracks.py
 ```
 
 Set `MAX_FOLDS = 5` in the config cell for a quick smoke test.
+
+## Results and running in parallel
+
+Each result row is one run (model × track × target × horizon × fold) and holds the
+metrics, `runtime_sec`, the test-window `y_true` / `y_pred` (lists), `error`, and
+`run_at` / `run_by` (set `RUN_BY` in the notebook config). `explode_predictions()` turns
+the lists into one row per test date.
+
+Results are stored as `results/raw/<model>/<track>.parquet`, and saving merges rather
+than overwrites: a run replaces only the rows it recomputed (keyed on model, track,
+target, horizon, fold_id). So team members can run different models or tracks at the
+same time, locally or in Colab, and commit without touching each other's files, and a
+smoke test on a few folds doesn't wipe out a full run. Writes hold a file lock and are
+atomic, so concurrent saves on one machine are safe too. The loop checkpoints every
+25 folds and at the end of each track, so a crash or Colab disconnect loses at most 25
+folds of work. To pick up where it stopped, set `RESUME = True` and rerun: runs that already
+succeeded with saved predictions are skipped, while errored runs and older results without
+predictions are redone. Leave `RESUME = False` after changing a model's code, otherwise
+its old results are kept. Two people committing the same
+(model, track) file will still conflict in git; agree on who owns each pair.
+
+The summary cells read everything on disk via `load_results()`, not just the latest run.
+`summary_disaggregated.csv` is derived, so regenerate it rather than merging it by hand.
 
 ## Adding a model
 

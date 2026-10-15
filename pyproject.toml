@@ -7,6 +7,7 @@ name = "capstone-quantum"
 version = "0.1.0"
 description = "Benchmarking classical and quantum-feature models for FRED-MD macro forecasting"
 requires-python = ">=3.11"
+dependencies = ["filelock"]
 
 [tool.setuptools.packages.find]
 include = ["src*"]

@@ -1,10 +1,12 @@
-"""The evaluation loop: folds x tracks x targets x horizons x models."""
+"""The evaluation loop: tracks x folds x targets x horizons x models."""
+import getpass
 import time
 
 import numpy as np
 import pandas as pd
 
 from .metrics import METRIC_COLS, compute_metrics, naive_mae
+from .store import completed_runs, save_results
 from .tracks import prepare_track
 
 GROUP_COLS = ["model", "track", "target", "horizon"]
@@ -26,6 +28,10 @@ def run_evaluation(
     track_data,
     stationary_panel,
     progress_every=1000,
+    run_by=None,
+    results_dir=None,
+    checkpoint_every=25,
+    resume=False,
 ):
     """
     Run every model on every (fold, track, target, horizon) combination.
@@ -41,19 +47,47 @@ def run_evaluation(
     track_config     : see src.evaluation.tracks
     track_data       : output of load_tracks()
     stationary_panel : DataFrame used as input to pipeline tracks
+    run_by           : name recorded in the ``run_by`` column (default: OS user)
+    results_dir      : if given, rows are merged into results_dir via save_results()
+                       every ``checkpoint_every`` folds and at the end of each track
+    checkpoint_every : folds between checkpoints when results_dir is given
+    resume           : skip runs that already have a successful result with predictions
+                       in results_dir; errored and prediction-less (legacy) runs are redone.
+                       Leave off after changing a model, or its old results are kept.
 
     Returns
     -------
-    pd.DataFrame with one row per run: identifiers, metrics, runtime, error
+    pd.DataFrame with one row per run computed in this call (skipped runs are not
+    included): identifiers, metrics, runtime, error, and ``y_true`` / ``y_pred``
+    lists over the test window (see explode_predictions)
     """
+    if resume and results_dir is None:
+        raise ValueError("resume=True needs results_dir")
+
+    run_by = run_by or getpass.getuser()
+    run_at = pd.Timestamp.now(tz="UTC")
     results = []
     total_runs = len(folds) * len(tracks) * len(targets) * len(horizons) * len(models)
     completed = 0
 
-    for fold in folds:
-        for track_name in tracks:
+    for track_name in tracks:
+        done = completed_runs(results_dir, models, track_name) if resume else set()
+        if done:
+            print(f"  Track {track_name}: resuming, {len(done)} runs already on disk will be skipped")
+        pending = []  # rows computed since the last checkpoint
+
+        for i, fold in enumerate(folds, 1):
             for target in targets:
-                # slice and prepare track data once per fold/track/target
+                todo = {
+                    (horizon, model_name)
+                    for horizon in horizons
+                    for model_name in models
+                    if (model_name, target, horizon, fold["fold_id"]) not in done
+                }
+                if not todo:
+                    continue
+
+                # slice and prepare track data once per track/fold/target
                 train_df, test_df = prepare_track(
                     track_name, target, fold, track_config, track_data, stationary_panel
                 )
@@ -70,6 +104,8 @@ def run_evaluation(
                     scale = naive_mae(y_train, horizon)
 
                     for model_name, model_fn in models.items():
+                        if (horizon, model_name) not in todo:
+                            continue
                         row = {
                             "model":       model_name,
                             "track":       track_name,
@@ -81,34 +117,38 @@ def run_evaluation(
                             "test_start":  fold["test_start"],
                             "test_end":    fold["test_end"],
                             "error":       None,
+                            "y_true":      y_test.astype(float).tolist(),
+                            "y_pred":      None,
+                            "run_at":      run_at,
+                            "run_by":      run_by,
                         }
 
+                        t0 = time.time()
                         try:
-                            t0 = time.time()
                             y_pred = model_fn(train_df, test_df, y_train, horizon)
                             row["runtime_sec"] = round(time.time() - t0, 4)
+                            row["y_pred"] = np.asarray(y_pred, dtype=float).tolist()
                             row.update(compute_metrics(y_test.values, y_pred.values, scale))
                         except Exception as e:
-                            row["runtime_sec"] = np.nan
+                            row["runtime_sec"] = round(time.time() - t0, 4)
                             row.update({m: np.nan for m in METRIC_COLS})
                             row["error"] = str(e)
 
-                        results.append(row)
+                        pending.append(row)
                         completed += 1
                         if progress_every and completed % progress_every == 0:
                             print(f"  {completed}/{total_runs} runs complete")
 
+            # checkpoint every few folds and at the end of the track, so a crash
+            # loses at most checkpoint_every folds of work
+            if results_dir is not None and pending and (i % checkpoint_every == 0 or i == len(folds)):
+                save_results(pd.DataFrame(pending), results_dir)
+                results.extend(pending)
+                pending = []
+        results.extend(pending)
+
     print(f"Loop complete. Total rows: {len(results)}")
     return pd.DataFrame(results)
-
-
-def save_results(results_df, results_dir):
-    """Write one <model>_raw.parquet per model."""
-    for model_name in results_df["model"].unique():
-        model_df = results_df[results_df["model"] == model_name]
-        out_path = results_dir / f"{model_name}_raw.parquet"
-        model_df.to_parquet(out_path, index=False)
-        print(f"  Saved: {out_path.name}   rows={len(model_df)}")
 
 
 def summarize(results_df):
