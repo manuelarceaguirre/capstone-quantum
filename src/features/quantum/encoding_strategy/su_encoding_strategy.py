@@ -162,7 +162,7 @@ class su_encoding_strategy(encoding_strategy):
                 ))
             ])
 
-        # Create one publication tuple per observation.
+        # Create one pubs tuple per observation.
         for row in scaled_data:
             pubs.append((circuit, row))
 

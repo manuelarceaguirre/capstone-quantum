@@ -3,8 +3,8 @@
 All functions follow the model contract in ``src/models/__init__.py``. They use
 only ``y_train`` and ignore the feature columns in ``train_df``/``test_df``.
 """
+import numpy as np
 import pandas as pd
-from statsmodels.tsa.ar_model import AutoReg
 
 
 def random_walk_model_function(train_df, test_df, y_train, horizon):
@@ -35,7 +35,12 @@ def random_walk_model_function(train_df, test_df, y_train, horizon):
 
 def AR6_model_function(train_df, test_df, y_train, horizon):
     """
-    Fits an AR(6) model using statsmodels AutoReg and forecasts horizon steps ahead.
+    Direct AR(6) forecast of the h-month change.
+
+    y_train[t] is the change from t to t+h, so at date t the latest known value is
+    y_train[t-h]. The model regresses y[t] on y[t-h], ..., y[t-h-5] by OLS and
+    applies the fit once at each test date. Unlike iterating a one-step AR(6)
+    h times, a single large shock at the end of the window cannot compound.
 
     Parameters
     ----------
@@ -53,17 +58,23 @@ def AR6_model_function(train_df, test_df, y_train, horizon):
     pd.Series
         Forecasts indexed by test_df.index
     """
-    y = y_train.shift(horizon - 1).dropna()
-    y.index = pd.to_datetime(y.index)
-    y = y.asfreq('MS')
+    lags = 6
+    y = np.asarray(y_train, dtype=float)
+    n = len(y)
+    if len(test_df) > horizon:
+        raise ValueError(f"AR6 needs test windows of at most {horizon} months, got {len(test_df)}")
 
-    # --- fit AR(6) model ---
-    model = AutoReg(y, lags=6, old_names=False).fit()
+    # design row for date t: intercept and the 6 latest values known at t
+    def design(t):
+        return np.r_[1.0, y[t - horizon - np.arange(lags)]]
 
-    # --- direct multi-step forecast ---
-    preds = model.model.predict(model.params, start=len(y), end=len(train_df) + len(test_df))
+    # training dates whose target is known at the forecast origin (t <= n - h)
+    rows = range(horizon + lags - 1, n - horizon + 1)
+    X = np.array([design(t) for t in rows])
+    beta = np.linalg.lstsq(X, y[list(rows)], rcond=None)[0]
 
-    return pd.Series(preds, index=test_df.index).iloc[:len(test_df)]
+    preds = [design(n + k) @ beta for k in range(len(test_df))]
+    return pd.Series(preds, index=test_df.index)
 
 
 def arima_model_function(train_df, test_df, y_train, horizon):

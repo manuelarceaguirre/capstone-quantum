@@ -1,7 +1,7 @@
 from qiskit_aer import AerSimulator
 from qiskit_ibm_runtime import Estimator
 from qiskit import QuantumCircuit, transpile
-from qiskit.quantum_info import DensityMatrix, SparsePauliOp, Statevector
+from qiskit.quantum_info import SparsePauliOp
 
 import numpy as np
 from math import comb, exp
@@ -212,78 +212,65 @@ class pce_result_getter(result_getter):
             where:
 
             - quantum_circuit : QuantumCircuit
-                Parameterized quantum circuit.
+                Parameterized quantum circuit. Observables act on its qubits
+                0 to num_qubits - 1; the circuit may have more qubits.
 
             - parameter_values : dict or sequence
                 Values assigned to the circuit parameters.
+
+            With an estimator, pubs that share a circuit structure are grouped:
+            each distinct circuit is transpiled once and submitted as one
+            estimator pub carrying every observable and the parameter values of
+            every pub that uses it, so the estimator can measure commuting
+            observables together.
 
         Returns
         -------
         pandas.DataFrame
             DataFrame containing expectation values for each Pauli feature.
 
-            - Rows correspond to circuit evaluations.
+            - Rows correspond to circuit evaluations, in the order of `pubs`.
             - Columns correspond to generated Pauli strings.
         """
+
+        values = np.empty((len(pubs), len(self.ops)))
 
         # Exact evaluation mode (no estimator provided).
         if self.estimator is None:
 
-            exact_results = []
+            qargs = list(range(self.num_qubits))
 
-            # Evaluate expectation values directly from the quantum state.
-            for circ, params in pubs:
-
-                # Bind parameters to the circuit.
-                bound = circ.assign_parameters(params, inplace=False)
-                # Statevector applies reset as a random projective measurement, so
-                # circuits with mid-circuit resets (reservoirs) need a density matrix
-                # to give exact, deterministic expectation values.
-                if "reset" in bound.count_ops():
-                    psi = DensityMatrix.from_instruction(bound)
-                else:
-                    psi = Statevector.from_instruction(bound)
-
-                # Compute expectation value for every Pauli observable.
-                for op in self.ops:
-                    exact_results.append(
-                        psi.expectation_value(op).real
-                    )
+            for row, (circ, params) in enumerate(pubs):
+                psi = self.exact_state(circ, params)
+                values[row] = [psi.expectation_value(op, qargs).real for op in self.ops]
 
         else:
-            # Estimator-based execution mode.
+            # Estimator-based execution mode: one estimator pub per distinct circuit.
 
+            groups = self.group_pubs(pubs)
             estimator_pubs = []
 
-            # Create one estimator job entry per observable.
-            for circ, params in pubs:
-                transpiled = transpile(pubs[0][0], self.estimator.backend())
-                for op in self.ops:
-                    estimator_pubs.append((transpiled, op.apply_layout(transpiled.layout), params))
+            for circ, indices in groups:
+                transpiled = transpile(circ, self.estimator.backend())
 
-            # Execute all observables through the estimator.
-            circuit_results = (
-                self.estimator
-                .run(pubs=estimator_pubs)
-                .result()
-            )
+                # Pad each observable to the circuit's width (qubit i stays qubit i), then
+                # follow the transpiled layout. Shape (num_observables, 1) broadcasts against
+                # the (num_pubs_in_group,) parameter sets.
+                observables = [
+                    [
+                        op.apply_layout(list(range(self.num_qubits)), circ.num_qubits)
+                        .apply_layout(transpiled.layout)
+                    ]
+                    for op in self.ops
+                ]
+                estimator_pubs.append(
+                    (transpiled, observables, self.parameter_matrix(circ, pubs, indices, transpiled))
+                )
 
-        # Initialize results DataFrame with Pauli string columns.
-        results = pd.DataFrame(columns=self.pce_strings, dtype=float)
+            circuit_results = self.estimator.run(pubs=estimator_pubs).result()
 
-        index = 0
+            # evs has shape (num_observables, num_pubs_in_group).
+            for (_, indices), pub_result in zip(groups, circuit_results):
+                values[indices] = np.asarray(pub_result.data.evs).T
 
-        # Populate DataFrame row-by-row.
-        for row in range(len(pubs)):
-
-            for column in self.pce_strings:
-
-                if self.estimator is None:
-                    results.loc[row, column] = exact_results[index]
-
-                else:
-                    results.loc[row, column] = circuit_results[index].data.evs
-
-                index += 1
-
-        return results
+        return pd.DataFrame(values, columns=self.pce_strings)

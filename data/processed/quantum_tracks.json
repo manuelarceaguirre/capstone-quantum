@@ -1,0 +1,508 @@
+{
+  "built_at": "2026-10-21T22:06:43.939456+00:00",
+  "input": "track_b_{target}.parquet",
+  "scaling": "causal min-max (expanding)",
+  "settings": {
+    "seed": 42,
+    "estimator_precision": 0.01,
+    "shots": 4096,
+    "noise_backend": null,
+    "num_trotter_steps": 6,
+    "pce_features": 9,
+    "pce_operators": 2
+  },
+  "tracks": [
+    "Q_heisenberg_pauli",
+    "Q_heisenberg_pce",
+    "Q_heisenberg_single_bit",
+    "Q_su_bitstring",
+    "Q_su_pauli",
+    "Q_su_pce",
+    "Q_su_single_bit",
+    "Q_zz_pauli",
+    "Q_zz_pce",
+    "Q_zz_single_bit"
+  ],
+  "log": [
+    {
+      "track": "Q_su_pce",
+      "encoding": "su",
+      "getter": "pce",
+      "target": "INDPRO",
+      "qubits": 5,
+      "status": "exists (resume)",
+      "features": 9.0,
+      "seconds": null
+    },
+    {
+      "track": "Q_su_pce",
+      "encoding": "su",
+      "getter": "pce",
+      "target": "PAYEMS",
+      "qubits": 5,
+      "status": "exists (resume)",
+      "features": 9.0,
+      "seconds": null
+    },
+    {
+      "track": "Q_su_pce",
+      "encoding": "su",
+      "getter": "pce",
+      "target": "CPIAUCSL",
+      "qubits": 6,
+      "status": "exists (resume)",
+      "features": 9.0,
+      "seconds": null
+    },
+    {
+      "track": "Q_su_pce",
+      "encoding": "su",
+      "getter": "pce",
+      "target": "S&P 500",
+      "qubits": 6,
+      "status": "exists (resume)",
+      "features": 9.0,
+      "seconds": null
+    },
+    {
+      "track": "Q_su_pauli",
+      "encoding": "su",
+      "getter": "pauli",
+      "target": "INDPRO",
+      "qubits": 5,
+      "status": "exists (resume)",
+      "features": 15.0,
+      "seconds": null
+    },
+    {
+      "track": "Q_su_pauli",
+      "encoding": "su",
+      "getter": "pauli",
+      "target": "PAYEMS",
+      "qubits": 5,
+      "status": "exists (resume)",
+      "features": 15.0,
+      "seconds": null
+    },
+    {
+      "track": "Q_su_pauli",
+      "encoding": "su",
+      "getter": "pauli",
+      "target": "CPIAUCSL",
+      "qubits": 6,
+      "status": "exists (resume)",
+      "features": 18.0,
+      "seconds": null
+    },
+    {
+      "track": "Q_su_pauli",
+      "encoding": "su",
+      "getter": "pauli",
+      "target": "S&P 500",
+      "qubits": 6,
+      "status": "exists (resume)",
+      "features": 18.0,
+      "seconds": null
+    },
+    {
+      "track": "Q_su_single_bit",
+      "encoding": "su",
+      "getter": "single_bit",
+      "target": "INDPRO",
+      "qubits": 5,
+      "status": "exists (resume)",
+      "features": 5.0,
+      "seconds": null
+    },
+    {
+      "track": "Q_su_single_bit",
+      "encoding": "su",
+      "getter": "single_bit",
+      "target": "PAYEMS",
+      "qubits": 5,
+      "status": "exists (resume)",
+      "features": 5.0,
+      "seconds": null
+    },
+    {
+      "track": "Q_su_single_bit",
+      "encoding": "su",
+      "getter": "single_bit",
+      "target": "CPIAUCSL",
+      "qubits": 6,
+      "status": "exists (resume)",
+      "features": 6.0,
+      "seconds": null
+    },
+    {
+      "track": "Q_su_single_bit",
+      "encoding": "su",
+      "getter": "single_bit",
+      "target": "S&P 500",
+      "qubits": 6,
+      "status": "exists (resume)",
+      "features": 6.0,
+      "seconds": null
+    },
+    {
+      "track": "Q_su_bitstring",
+      "encoding": "su",
+      "getter": "bitstring",
+      "target": "INDPRO",
+      "qubits": 5,
+      "status": "exists (resume)",
+      "features": 32.0,
+      "seconds": null
+    },
+    {
+      "track": "Q_su_bitstring",
+      "encoding": "su",
+      "getter": "bitstring",
+      "target": "PAYEMS",
+      "qubits": 5,
+      "status": "exists (resume)",
+      "features": 32.0,
+      "seconds": null
+    },
+    {
+      "track": "Q_su_bitstring",
+      "encoding": "su",
+      "getter": "bitstring",
+      "target": "CPIAUCSL",
+      "qubits": 6,
+      "status": "exists (resume)",
+      "features": 64.0,
+      "seconds": null
+    },
+    {
+      "track": "Q_su_bitstring",
+      "encoding": "su",
+      "getter": "bitstring",
+      "target": "S&P 500",
+      "qubits": 6,
+      "status": "exists (resume)",
+      "features": 64.0,
+      "seconds": null
+    },
+    {
+      "track": "Q_heisenberg_pce",
+      "encoding": "heisenberg",
+      "getter": "pce",
+      "target": "INDPRO",
+      "qubits": 11,
+      "status": "exists (resume)",
+      "features": 9.0,
+      "seconds": null
+    },
+    {
+      "track": "Q_heisenberg_pce",
+      "encoding": "heisenberg",
+      "getter": "pce",
+      "target": "PAYEMS",
+      "qubits": 11,
+      "status": "exists (resume)",
+      "features": 9.0,
+      "seconds": null
+    },
+    {
+      "track": "Q_heisenberg_pce",
+      "encoding": "heisenberg",
+      "getter": "pce",
+      "target": "CPIAUCSL",
+      "qubits": 13,
+      "status": "exists (resume)",
+      "features": 9.0,
+      "seconds": null
+    },
+    {
+      "track": "Q_heisenberg_pce",
+      "encoding": "heisenberg",
+      "getter": "pce",
+      "target": "S&P 500",
+      "qubits": 13,
+      "status": "exists (resume)",
+      "features": 9.0,
+      "seconds": null
+    },
+    {
+      "track": "Q_heisenberg_pauli",
+      "encoding": "heisenberg",
+      "getter": "pauli",
+      "target": "INDPRO",
+      "qubits": 11,
+      "status": "exists (resume)",
+      "features": 33.0,
+      "seconds": null
+    },
+    {
+      "track": "Q_heisenberg_pauli",
+      "encoding": "heisenberg",
+      "getter": "pauli",
+      "target": "PAYEMS",
+      "qubits": 11,
+      "status": "exists (resume)",
+      "features": 33.0,
+      "seconds": null
+    },
+    {
+      "track": "Q_heisenberg_pauli",
+      "encoding": "heisenberg",
+      "getter": "pauli",
+      "target": "CPIAUCSL",
+      "qubits": 13,
+      "status": "built",
+      "features": 39.0,
+      "seconds": 166.1
+    },
+    {
+      "track": "Q_heisenberg_pauli",
+      "encoding": "heisenberg",
+      "getter": "pauli",
+      "target": "S&P 500",
+      "qubits": 13,
+      "status": "built",
+      "features": 39.0,
+      "seconds": 167.4
+    },
+    {
+      "track": "Q_heisenberg_single_bit",
+      "encoding": "heisenberg",
+      "getter": "single_bit",
+      "target": "INDPRO",
+      "qubits": 11,
+      "status": "built",
+      "features": 11.0,
+      "seconds": 16.5
+    },
+    {
+      "track": "Q_heisenberg_single_bit",
+      "encoding": "heisenberg",
+      "getter": "single_bit",
+      "target": "PAYEMS",
+      "qubits": 11,
+      "status": "built",
+      "features": 11.0,
+      "seconds": 16.1
+    },
+    {
+      "track": "Q_heisenberg_single_bit",
+      "encoding": "heisenberg",
+      "getter": "single_bit",
+      "target": "CPIAUCSL",
+      "qubits": 13,
+      "status": "built",
+      "features": 13.0,
+      "seconds": 20.8
+    },
+    {
+      "track": "Q_heisenberg_single_bit",
+      "encoding": "heisenberg",
+      "getter": "single_bit",
+      "target": "S&P 500",
+      "qubits": 13,
+      "status": "built",
+      "features": 13.0,
+      "seconds": 21.3
+    },
+    {
+      "track": "Q_heisenberg_bitstring",
+      "encoding": "heisenberg",
+      "getter": "bitstring",
+      "target": "INDPRO",
+      "qubits": 11,
+      "status": "skipped: 2048 columns > 2^8",
+      "features": null,
+      "seconds": null
+    },
+    {
+      "track": "Q_heisenberg_bitstring",
+      "encoding": "heisenberg",
+      "getter": "bitstring",
+      "target": "PAYEMS",
+      "qubits": 11,
+      "status": "skipped: 2048 columns > 2^8",
+      "features": null,
+      "seconds": null
+    },
+    {
+      "track": "Q_heisenberg_bitstring",
+      "encoding": "heisenberg",
+      "getter": "bitstring",
+      "target": "CPIAUCSL",
+      "qubits": 13,
+      "status": "skipped: 8192 columns > 2^8",
+      "features": null,
+      "seconds": null
+    },
+    {
+      "track": "Q_heisenberg_bitstring",
+      "encoding": "heisenberg",
+      "getter": "bitstring",
+      "target": "S&P 500",
+      "qubits": 13,
+      "status": "skipped: 8192 columns > 2^8",
+      "features": null,
+      "seconds": null
+    },
+    {
+      "track": "Q_zz_pce",
+      "encoding": "zz",
+      "getter": "pce",
+      "target": "INDPRO",
+      "qubits": 11,
+      "status": "built",
+      "features": 9.0,
+      "seconds": 28.6
+    },
+    {
+      "track": "Q_zz_pce",
+      "encoding": "zz",
+      "getter": "pce",
+      "target": "PAYEMS",
+      "qubits": 11,
+      "status": "built",
+      "features": 9.0,
+      "seconds": 27.9
+    },
+    {
+      "track": "Q_zz_pce",
+      "encoding": "zz",
+      "getter": "pce",
+      "target": "CPIAUCSL",
+      "qubits": 13,
+      "status": "built",
+      "features": 9.0,
+      "seconds": 30.4
+    },
+    {
+      "track": "Q_zz_pce",
+      "encoding": "zz",
+      "getter": "pce",
+      "target": "S&P 500",
+      "qubits": 13,
+      "status": "built",
+      "features": 9.0,
+      "seconds": 30.1
+    },
+    {
+      "track": "Q_zz_pauli",
+      "encoding": "zz",
+      "getter": "pauli",
+      "target": "INDPRO",
+      "qubits": 11,
+      "status": "built",
+      "features": 33.0,
+      "seconds": 96.4
+    },
+    {
+      "track": "Q_zz_pauli",
+      "encoding": "zz",
+      "getter": "pauli",
+      "target": "PAYEMS",
+      "qubits": 11,
+      "status": "built",
+      "features": 33.0,
+      "seconds": 94.2
+    },
+    {
+      "track": "Q_zz_pauli",
+      "encoding": "zz",
+      "getter": "pauli",
+      "target": "CPIAUCSL",
+      "qubits": 13,
+      "status": "built",
+      "features": 39.0,
+      "seconds": 148.4
+    },
+    {
+      "track": "Q_zz_pauli",
+      "encoding": "zz",
+      "getter": "pauli",
+      "target": "S&P 500",
+      "qubits": 13,
+      "status": "built",
+      "features": 39.0,
+      "seconds": 146.9
+    },
+    {
+      "track": "Q_zz_single_bit",
+      "encoding": "zz",
+      "getter": "single_bit",
+      "target": "INDPRO",
+      "qubits": 11,
+      "status": "built",
+      "features": 11.0,
+      "seconds": 12.6
+    },
+    {
+      "track": "Q_zz_single_bit",
+      "encoding": "zz",
+      "getter": "single_bit",
+      "target": "PAYEMS",
+      "qubits": 11,
+      "status": "built",
+      "features": 11.0,
+      "seconds": 12.6
+    },
+    {
+      "track": "Q_zz_single_bit",
+      "encoding": "zz",
+      "getter": "single_bit",
+      "target": "CPIAUCSL",
+      "qubits": 13,
+      "status": "built",
+      "features": 13.0,
+      "seconds": 14.7
+    },
+    {
+      "track": "Q_zz_single_bit",
+      "encoding": "zz",
+      "getter": "single_bit",
+      "target": "S&P 500",
+      "qubits": 13,
+      "status": "built",
+      "features": 13.0,
+      "seconds": 14.6
+    },
+    {
+      "track": "Q_zz_bitstring",
+      "encoding": "zz",
+      "getter": "bitstring",
+      "target": "INDPRO",
+      "qubits": 11,
+      "status": "skipped: 2048 columns > 2^8",
+      "features": null,
+      "seconds": null
+    },
+    {
+      "track": "Q_zz_bitstring",
+      "encoding": "zz",
+      "getter": "bitstring",
+      "target": "PAYEMS",
+      "qubits": 11,
+      "status": "skipped: 2048 columns > 2^8",
+      "features": null,
+      "seconds": null
+    },
+    {
+      "track": "Q_zz_bitstring",
+      "encoding": "zz",
+      "getter": "bitstring",
+      "target": "CPIAUCSL",
+      "qubits": 13,
+      "status": "skipped: 8192 columns > 2^8",
+      "features": null,
+      "seconds": null
+    },
+    {
+      "track": "Q_zz_bitstring",
+      "encoding": "zz",
+      "getter": "bitstring",
+      "target": "S&P 500",
+      "qubits": 13,
+      "status": "skipped: 8192 columns > 2^8",
+      "features": null,
+      "seconds": null
+    }
+  ]
+}

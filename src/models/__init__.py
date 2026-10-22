@@ -38,6 +38,7 @@ from .konduri import (
     svr_linear_di_model_function,
     xgboost_di_model_function,
 )
+from .readout import linear_readout_model_function
 
 MODEL_REGISTRY = {
     "random_walk":    random_walk_model_function,
@@ -48,6 +49,7 @@ MODEL_REGISTRY = {
     "adaboost_di":    adaboost_di_model_function,
     "knn_di":         knn_di_model_function,
     "svr_linear_di":  svr_linear_di_model_function,
+    "linear_readout": linear_readout_model_function,
 }
 if HAS_XGB:
     MODEL_REGISTRY["xgboost_di"] = xgboost_di_model_function
@@ -64,4 +66,5 @@ __all__ = [
     "knn_di_model_function",
     "svr_linear_di_model_function",
     "xgboost_di_model_function",
+    "linear_readout_model_function",
 ]
