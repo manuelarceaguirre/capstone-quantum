@@ -81,6 +81,12 @@ def adaboost_model_function(train_df: pd.DataFrame, test_df: pd.DataFrame, y_tra
     return _fit_predict_model(estimator, train_df, test_df, y_train)
 
 
+def decision_tree_model_function(train_df: pd.DataFrame, test_df: pd.DataFrame, y_train: pd.Series, horizon: int = 0):
+    # Single regression tree; depth/leaf limits keep it from memorising the 120-month window.
+    estimator = DecisionTreeRegressor(max_depth=5, min_samples_leaf=5, random_state=SEED)
+    return _fit_predict_model(estimator, train_df, test_df, y_train)
+
+
 def random_forest_model_function(train_df: pd.DataFrame, test_df: pd.DataFrame, y_train: pd.Series, horizon: int = 0):
     estimator = RandomForestRegressor(
         n_estimators=80,
@@ -142,6 +148,29 @@ def svr_linear_di_model_function(train_df: pd.DataFrame, test_df: pd.DataFrame, 
         transformer=StandardScaler(),
     )
     return _fit_predict_di_model(estimator, train_df, test_df, y_train)
+
+
+def _xgb_estimator():
+    return XGBRegressor(
+        n_estimators=80,
+        learning_rate=0.05,
+        max_depth=3,
+        min_child_weight=5,
+        subsample=0.85,
+        colsample_bytree=0.85,
+        reg_lambda=1.0,
+        objective="reg:squarederror",
+        random_state=SEED,
+        n_jobs=1,
+        verbosity=0,
+    )
+
+
+def xgboost_model_function(train_df: pd.DataFrame, test_df: pd.DataFrame, y_train: pd.Series, horizon: int = 0):
+    # Same settings as xgboost_di, but on the raw track features (like adaboost / random_forest).
+    if not HAS_XGB or XGBRegressor is None:
+        raise ImportError("xgboost is not installed")
+    return _fit_predict_model(_xgb_estimator(), train_df, test_df, y_train)
 
 
 def xgboost_di_model_function(train_df: pd.DataFrame, test_df: pd.DataFrame, y_train: pd.Series, horizon: int = 0):
