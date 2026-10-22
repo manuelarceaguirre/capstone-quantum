@@ -40,7 +40,9 @@ from .konduri import (
     xgboost_di_model_function,
     xgboost_model_function,
 )
+from .linear_svm import linear_svm_model_function
 from .readout import linear_readout_model_function
+from .sig_kernel import sig_kernel_model_function
 
 MODEL_REGISTRY = {
     "random_walk":    random_walk_model_function,
@@ -53,6 +55,8 @@ MODEL_REGISTRY = {
     "knn_di":         knn_di_model_function,
     "svr_linear_di":  svr_linear_di_model_function,
     "linear_readout": linear_readout_model_function,
+    "linear_svm":     linear_svm_model_function,
+    "sig_kernel":     sig_kernel_model_function,
 }
 if HAS_XGB:
     MODEL_REGISTRY["xgboost"] = xgboost_model_function
@@ -73,4 +77,6 @@ __all__ = [
     "xgboost_di_model_function",
     "xgboost_model_function",
     "linear_readout_model_function",
+    "linear_svm_model_function",
+    "sig_kernel_model_function",
 ]
