@@ -42,6 +42,7 @@ from .konduri import (
 )
 from .linear_svm import linear_svm_model_function
 from .readout import linear_readout_model_function
+from .recurrent import HAS_TORCH, gru_model_function, lstm_model_function, rnn_model_function
 from .sig_kernel import sig_kernel_model_function
 
 MODEL_REGISTRY = {
@@ -61,6 +62,10 @@ MODEL_REGISTRY = {
 if HAS_XGB:
     MODEL_REGISTRY["xgboost"] = xgboost_model_function
     MODEL_REGISTRY["xgboost_di"] = xgboost_di_model_function
+if HAS_TORCH:
+    MODEL_REGISTRY["rnn"] = rnn_model_function
+    MODEL_REGISTRY["gru"] = gru_model_function
+    MODEL_REGISTRY["lstm"] = lstm_model_function
 
 __all__ = [
     "MODEL_REGISTRY",
@@ -77,6 +82,10 @@ __all__ = [
     "xgboost_di_model_function",
     "xgboost_model_function",
     "linear_readout_model_function",
+    "HAS_TORCH",
+    "rnn_model_function",
+    "gru_model_function",
+    "lstm_model_function",
     "linear_svm_model_function",
     "sig_kernel_model_function",
 ]

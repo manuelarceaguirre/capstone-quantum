@@ -1,0 +1,11 @@
+entry,mean_rank,rank_sd,profile,notes
+random_forest,2.54,1.52,Consistently strong,
+adaboost,3.4,2.09,"Consistently strong, Target specialist","strong on S&P 500 (2.2), weak on CPIAUCSL (6.2)"
+sig_kernel,4.31,2.17,Target specialist,"strong on CPIAUCSL (2.3), weak on S&P 500 (6.2)"
+xgboost,4.83,2.22,"Target specialist, Horizon specialist, Regime specialist","strong on S&P 500 (3.9), weak on CPIAUCSL (7.1); strong on h=6 (3.8), weak on h=1 (6.5); better in Recession (-3.3 places vs expansion)"
+AR6,5.83,3.1,"Target specialist, Regime specialist","strong on CPIAUCSL (2.1), weak on PAYEMS (9.2); worse in COVID (+4.6 places vs expansion)"
+linear_readout,6.27,2.28,Middle of the pack,
+linear_svm,6.71,2.46,Middle of the pack,
+arima,6.77,3.14,Target specialist,"strong on CPIAUCSL (2.9), weak on INDPRO (8.4)"
+random_walk,6.92,2.73,Target specialist,"strong on CPIAUCSL (3.4), weak on S&P 500 (9.4)"
+decision_tree,7.42,2.19,"Consistently weak, Regime specialist",better in COVID (-3.9 places vs expansion)

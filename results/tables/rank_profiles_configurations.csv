@@ -1,0 +1,20 @@
+entry,mean_rank,rank_sd,profile,notes
+random_forest@A,2.6,1.3,Consistently strong,
+adaboost@A,3.52,3.23,"Consistently strong, Metric-sensitive, Regime specialist",RMSE rank +3.9 vs MAE/median AE: occasional large misses; worse in COVID (+6.0 places vs expansion)
+xgboost@A,4.29,3.79,Consistently strong,
+random_forest@B,5.46,2.35,Consistently strong,
+adaboost@B,6.77,2.85,Consistently strong,
+sig_kernel@B,8.67,4.4,Target specialist,"strong on CPIAUCSL (4.7), weak on S&P 500 (13.5)"
+xgboost@B,8.9,3.2,Regime specialist,better in Recession (-6.2 places vs expansion)
+linear_readout@Q_su_pce,9.67,3.79,Target specialist,"strong on S&P 500 (7.0), weak on CPIAUCSL (13.0)"
+linear_readout@B,11.54,4.29,Middle of the pack,
+decision_tree@A,11.56,5.57,Horizon specialist,"strong on h=6 (5.9), weak on h=1 (16.6)"
+AR6,12.02,5.68,"Target specialist, Regime specialist","strong on CPIAUCSL (4.4), weak on PAYEMS (16.8); worse in COVID (+8.8 places vs expansion)"
+linear_readout@Q_su_single_bit,12.17,3.4,Regime specialist,better in COVID (-7.0 places vs expansion)
+linear_readout@Q_heisenberg_pce,12.33,3.82,Middle of the pack,
+linear_readout@Q_su_pauli,12.6,3.98,"Metric-sensitive, Regime specialist","RMSE rank -4.3 vs MAE/median AE: avoids large misses, weaker typical month; better in COVID (-5.8 places vs expansion)"
+linear_svm@B,12.83,4.79,Middle of the pack,
+arima,13.02,5.88,Target specialist,"strong on CPIAUCSL (5.8), weak on S&P 500 (16.7)"
+random_walk,13.5,5.17,Middle of the pack,
+linear_readout@Q_su_bitstring,14.0,3.86,Regime specialist,better in COVID (-5.9 places vs expansion)
+decision_tree@B,14.54,3.78,"Consistently weak, Regime specialist",better in Recession (-6.2 places vs expansion); better in COVID (-5.9 places vs expansion)
