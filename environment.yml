@@ -117,4 +117,5 @@ dependencies:
       - typing-inspection==0.4.2
       - tzdata==2026.2
       - urllib3==2.6.3
+      - xgboost==3.2.0
 prefix: C:\dev\environments\capstone
