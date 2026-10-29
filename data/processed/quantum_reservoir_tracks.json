@@ -1,0 +1,70 @@
+{
+  "built_at": "2026-10-28T00:33:25.352473+00:00",
+  "input": "track_b_{target}.parquet",
+  "scaling": "causal min-max (expanding)",
+  "settings": {
+    "window": 12,
+    "num_hidden": null,
+    "seed": 42,
+    "estimator_precision": 0.01,
+    "shots": 4096,
+    "noise_backend": null,
+    "ansatz": "efficient_su2 (random, fixed)",
+    "ansatz_reps": 1,
+    "num_trotter_steps": 6,
+    "pce_operators": 2
+  },
+  "tracks": [
+    "MCR_su_z"
+  ],
+  "log": [
+    {
+      "track": "MCR_su_z",
+      "encoding": "su",
+      "getter": "z",
+      "target": "INDPRO",
+      "qubits": 10,
+      "visible": 10,
+      "hidden": 10,
+      "status": "built",
+      "features": 10,
+      "seconds": 155.9
+    },
+    {
+      "track": "MCR_su_z",
+      "encoding": "su",
+      "getter": "z",
+      "target": "PAYEMS",
+      "qubits": 10,
+      "visible": 10,
+      "hidden": 10,
+      "status": "built",
+      "features": 10,
+      "seconds": 144.0
+    },
+    {
+      "track": "MCR_su_z",
+      "encoding": "su",
+      "getter": "z",
+      "target": "CPIAUCSL",
+      "qubits": 12,
+      "visible": 12,
+      "hidden": 12,
+      "status": "built",
+      "features": 12,
+      "seconds": 165.6
+    },
+    {
+      "track": "MCR_su_z",
+      "encoding": "su",
+      "getter": "z",
+      "target": "S&P 500",
+      "qubits": 12,
+      "visible": 12,
+      "hidden": 12,
+      "status": "built",
+      "features": 12,
+      "seconds": 166.1
+    }
+  ]
+}

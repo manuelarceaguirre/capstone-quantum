@@ -1,11 +1,14 @@
-entry,mean_rank,rank_sd,profile,notes
-random_forest,2.54,1.52,Consistently strong,
-adaboost,3.4,2.09,"Consistently strong, Target specialist","strong on S&P 500 (2.2), weak on CPIAUCSL (6.2)"
-sig_kernel,4.31,2.17,Target specialist,"strong on CPIAUCSL (2.3), weak on S&P 500 (6.2)"
-xgboost,4.83,2.22,"Target specialist, Horizon specialist, Regime specialist","strong on S&P 500 (3.9), weak on CPIAUCSL (7.1); strong on h=6 (3.8), weak on h=1 (6.5); better in Recession (-3.3 places vs expansion)"
-AR6,5.83,3.1,"Target specialist, Regime specialist","strong on CPIAUCSL (2.1), weak on PAYEMS (9.2); worse in COVID (+4.6 places vs expansion)"
-linear_readout,6.27,2.28,Middle of the pack,
-linear_svm,6.71,2.46,Middle of the pack,
-arima,6.77,3.14,Target specialist,"strong on CPIAUCSL (2.9), weak on INDPRO (8.4)"
-random_walk,6.92,2.73,Target specialist,"strong on CPIAUCSL (3.4), weak on S&P 500 (9.4)"
-decision_tree,7.42,2.19,"Consistently weak, Regime specialist",better in COVID (-3.9 places vs expansion)
+entry,owa,mean_rank,rank_sd,profile,notes
+random_forest,83.0,2.94,1.62,Consistently strong,
+adaboost,71.8,3.96,2.5,Consistently strong,
+xgboost,60.9,5.9,3.06,"Target specialist, Horizon specialist, Regime specialist","strong on S&P 500 (4.9), weak on CPIAUCSL (7.8); strong on h=6 (4.1), weak on h=1 (8.8); better in Recession (-4.7 places vs expansion)"
+gru,55.9,6.21,2.67,Target specialist,"strong on INDPRO (4.9), weak on CPIAUCSL (8.5)"
+sig_kernel,54.1,5.6,3.15,Target specialist,"strong on CPIAUCSL (2.3), weak on S&P 500 (8.6)"
+lstm,51.6,6.33,3.48,Target specialist,"strong on S&P 500 (3.4), weak on CPIAUCSL (9.0)"
+rnn,46.6,8.12,2.75,Metric-sensitive,"RMSE rank -2.7 vs MAE/median AE: avoids large misses, weaker typical month"
+linear_readout,45.7,7.96,2.76,Middle of the pack,
+linear_svm,38.7,9.0,3.06,Consistently weak,
+decision_tree,35.9,9.85,3.0,"Consistently weak, Regime specialist",better in Recession (-4.2 places vs expansion); better in COVID (-4.5 places vs expansion)
+AR6,34.3,7.6,4.22,"Target specialist, Regime specialist","strong on CPIAUCSL (2.1), weak on PAYEMS (11.5); worse in COVID (+6.3 places vs expansion)"
+random_walk,32.0,8.79,4.01,Target specialist,"strong on CPIAUCSL (3.5), weak on S&P 500 (12.4)"
+arima,30.1,8.73,4.37,Target specialist,"strong on CPIAUCSL (3.1), weak on INDPRO (11.2)"
