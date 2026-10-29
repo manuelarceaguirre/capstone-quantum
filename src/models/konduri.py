@@ -58,7 +58,15 @@ def _prepare_xy(
     return X_train, y, X_test
 
 
-def _fit_predict_model(estimator, train_df: pd.DataFrame, test_df: pd.DataFrame, y_train: pd.Series):
+def _drop_lookahead(train_df: pd.DataFrame, y_train: pd.Series, horizon: int):
+    """Drop the last ``horizon - 1`` training rows, whose targets end after the forecast origin."""
+    if horizon > 1:
+        return train_df.iloc[:-(horizon - 1)], y_train.iloc[:-(horizon - 1)]
+    return train_df, y_train
+
+
+def _fit_predict_model(estimator, train_df: pd.DataFrame, test_df: pd.DataFrame, y_train: pd.Series, horizon: int):
+    train_df, y_train = _drop_lookahead(train_df, y_train, horizon)
     X_train, y, X_test = _prepare_xy(train_df, test_df, y_train)
     model = Pipeline(
         [
@@ -78,13 +86,13 @@ def adaboost_model_function(train_df: pd.DataFrame, test_df: pd.DataFrame, y_tra
         learning_rate=0.05,
         random_state=SEED,
     )
-    return _fit_predict_model(estimator, train_df, test_df, y_train)
+    return _fit_predict_model(estimator, train_df, test_df, y_train, horizon)
 
 
 def decision_tree_model_function(train_df: pd.DataFrame, test_df: pd.DataFrame, y_train: pd.Series, horizon: int = 0):
     # Single regression tree; depth/leaf limits keep it from memorising the 120-month window.
     estimator = DecisionTreeRegressor(max_depth=5, min_samples_leaf=5, random_state=SEED)
-    return _fit_predict_model(estimator, train_df, test_df, y_train)
+    return _fit_predict_model(estimator, train_df, test_df, y_train, horizon)
 
 
 def random_forest_model_function(train_df: pd.DataFrame, test_df: pd.DataFrame, y_train: pd.Series, horizon: int = 0):
@@ -95,10 +103,11 @@ def random_forest_model_function(train_df: pd.DataFrame, test_df: pd.DataFrame, 
         random_state=SEED,
         n_jobs=-1,
     )
-    return _fit_predict_model(estimator, train_df, test_df, y_train)
+    return _fit_predict_model(estimator, train_df, test_df, y_train, horizon)
 
 
-def _fit_predict_di_model(estimator, train_df: pd.DataFrame, test_df: pd.DataFrame, y_train: pd.Series):
+def _fit_predict_di_model(estimator, train_df: pd.DataFrame, test_df: pd.DataFrame, y_train: pd.Series, horizon: int):
+    train_df, y_train = _drop_lookahead(train_df, y_train, horizon)
     X_train, y, X_test = _prepare_xy(train_df, test_df, y_train)
     n_components = 0.80 if min(X_train.shape) > 1 else 1
     diffusion_index = Pipeline(
@@ -124,7 +133,7 @@ def adaboost_di_model_function(train_df: pd.DataFrame, test_df: pd.DataFrame, y_
         learning_rate=0.05,
         random_state=SEED,
     )
-    return _fit_predict_di_model(estimator, train_df, test_df, y_train)
+    return _fit_predict_di_model(estimator, train_df, test_df, y_train, horizon)
 
 
 def knn_di_model_function(train_df: pd.DataFrame, test_df: pd.DataFrame, y_train: pd.Series, horizon: int = 0):
@@ -134,7 +143,7 @@ def knn_di_model_function(train_df: pd.DataFrame, test_df: pd.DataFrame, y_train
             ("knn", KNeighborsRegressor(n_neighbors=10, weights="distance", metric="euclidean")),
         ]
     )
-    return _fit_predict_di_model(estimator, train_df, test_df, y_train)
+    return _fit_predict_di_model(estimator, train_df, test_df, y_train, horizon)
 
 
 def svr_linear_di_model_function(train_df: pd.DataFrame, test_df: pd.DataFrame, y_train: pd.Series, horizon: int = 0):
@@ -147,7 +156,7 @@ def svr_linear_di_model_function(train_df: pd.DataFrame, test_df: pd.DataFrame, 
         ),
         transformer=StandardScaler(),
     )
-    return _fit_predict_di_model(estimator, train_df, test_df, y_train)
+    return _fit_predict_di_model(estimator, train_df, test_df, y_train, horizon)
 
 
 def _xgb_estimator():
@@ -170,7 +179,7 @@ def xgboost_model_function(train_df: pd.DataFrame, test_df: pd.DataFrame, y_trai
     # Same settings as xgboost_di, but on the raw track features (like adaboost / random_forest).
     if not HAS_XGB or XGBRegressor is None:
         raise ImportError("xgboost is not installed")
-    return _fit_predict_model(_xgb_estimator(), train_df, test_df, y_train)
+    return _fit_predict_model(_xgb_estimator(), train_df, test_df, y_train, horizon)
 
 
 def xgboost_di_model_function(train_df: pd.DataFrame, test_df: pd.DataFrame, y_train: pd.Series, horizon: int = 0):
@@ -189,4 +198,4 @@ def xgboost_di_model_function(train_df: pd.DataFrame, test_df: pd.DataFrame, y_t
         n_jobs=1,
         verbosity=0,
     )
-    return _fit_predict_di_model(estimator, train_df, test_df, y_train)
+    return _fit_predict_di_model(estimator, train_df, test_df, y_train, horizon)

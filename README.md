@@ -56,6 +56,9 @@ conda env create -f environment.yml   # includes `pip install -e .`, so `import 
 conda activate capstone
 ```
 
+`environment.yml` is a Windows export. On macOS, Linux or Colab use the same pins via
+`pip install -r requirements.txt && pip install -e .` (Python 3.11).
+
 In Colab, set `COLAB = True` in the first cell of `02_evaluation_loop.ipynb`.
 
 ## Running
