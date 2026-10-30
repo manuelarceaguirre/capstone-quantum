@@ -1,118 +1,134 @@
 entry,owa,mean_rank,rank_sd,profile,notes
-random_forest@A,91.1,4.06,6.39,"Consistently strong, Regime specialist",worse in COVID (+56.5 places vs expansion)
-random_forest@B,87.2,10.6,7.85,"Consistently strong, Regime specialist",worse in COVID (+41.1 places vs expansion)
-adaboost@A,80.3,10.4,22.99,"Metric-sensitive, Regime specialist",RMSE rank +24.8 vs MAE/median AE: occasional large misses; worse in COVID (+57.6 places vs expansion)
-adaboost@B,78.6,17.0,20.18,"Consistently strong, Regime specialist",worse in COVID (+37.4 places vs expansion)
-xgboost@A,78.1,14.12,24.44,Regime specialist,worse in COVID (+52.5 places vs expansion)
-adaboost@Q_su_pauli,73.6,32.4,15.57,Consistently strong,
-adaboost@Q_zz_pauli,72.8,23.6,17.58,"Consistently strong, Regime specialist",worse in Recession (+41.0 places vs expansion)
-lstm@B,72.6,27.5,21.49,Consistently strong,
-random_forest@Q_zz_pauli,72.4,27.65,13.49,Consistently strong,
-random_forest@Q_heisenberg_pauli,71.5,28.83,15.06,Consistently strong,
-xgboost@B,71.5,27.12,24.94,Middle of the pack,
-random_forest@Q_su_pauli,70.1,37.46,15.43,Consistently strong,
-gru@B,68.5,31.67,23.96,Middle of the pack,
-linear_readout@Q_su_pce,68.3,33.25,14.29,Consistently strong,
-adaboost@Q_heisenberg_pauli,68.0,30.04,18.19,"Consistently strong, Regime specialist",worse in Recession (+38.9 places vs expansion)
-sig_kernel@Q_zz_pauli,67.8,26.52,24.94,"Metric-sensitive, Regime specialist",RMSE rank +29.3 vs MAE/median AE: occasional large misses; worse in COVID (+48.2 places vs expansion)
-gru@Q_su_pce,67.7,35.25,17.53,Consistently strong,
-sig_kernel@Q_zz_single_bit,67.4,29.06,25.63,Regime specialist,worse in COVID (+42.2 places vs expansion)
-lstm@Q_su_pce,66.4,32.04,22.99,Regime specialist,worse in COVID (+37.3 places vs expansion)
-adaboost@Q_su_pce,65.1,37.44,20.3,Consistently strong,
-random_forest@Q_su_pce,64.3,37.46,25.22,Horizon specialist,"strong on h=6 (21.9), weak on h=1 (59.9)"
-sig_kernel@Q_heisenberg_pauli,64.0,30.1,28.53,"Metric-sensitive, Regime specialist",RMSE rank +32.4 vs MAE/median AE: occasional large misses; worse in COVID (+52.8 places vs expansion)
-random_forest@Q_su_bitstring,63.7,43.38,20.27,Horizon specialist,"strong on h=6 (26.1), weak on h=1 (61.1)"
-adaboost@Q_su_single_bit,62.8,45.23,20.58,Middle of the pack,
-lstm@Q_heisenberg_single_bit,62.6,40.73,20.83,Target specialist,"strong on S&P 500 (21.8), weak on PAYEMS (61.7)"
-rnn@B,62.1,40.67,27.63,Middle of the pack,
-random_forest@Q_su_single_bit,62.0,48.79,21.96,"Target specialist, Horizon specialist","strong on CPIAUCSL (27.8), weak on INDPRO (59.4); strong on h=6 (39.5), weak on h=1 (62.9)"
-sig_kernel@Q_zz_pce,61.8,33.85,30.61,Target specialist,"strong on CPIAUCSL (10.6), weak on S&P 500 (79.8)"
-random_forest@Q_heisenberg_single_bit,60.1,43.46,18.68,Horizon specialist,"strong on h=6 (28.2), weak on h=1 (63.4)"
-linear_svm@Q_su_pce,59.6,45.58,22.49,Middle of the pack,
-lstm@Q_heisenberg_pauli,59.0,45.42,24.16,Target specialist,"strong on S&P 500 (11.9), weak on CPIAUCSL (65.5)"
-sig_kernel@Q_heisenberg_single_bit,58.4,35.65,32.93,"Target specialist, Metric-sensitive, Regime specialist","strong on CPIAUCSL (6.3), weak on S&P 500 (70.8); RMSE rank +36.2 vs MAE/median AE: occasional large misses; worse in COVID (+46.8 places vs expansion)"
-rnn@Q_su_pce,57.0,50.85,22.12,"Target specialist, Metric-sensitive","strong on PAYEMS (39.4), weak on CPIAUCSL (79.2); RMSE rank -23.9 vs MAE/median AE: avoids large misses, weaker typical month"
-adaboost@Q_zz_pce,57.0,52.58,18.22,Target specialist,"strong on S&P 500 (36.6), weak on INDPRO (61.8)"
-linear_readout@Q_zz_single_bit,57.0,45.52,17.45,"Target specialist, Regime specialist","strong on S&P 500 (27.0), weak on PAYEMS (60.5); worse in Recession (+42.2 places vs expansion)"
-linear_readout@Q_su_single_bit,56.8,52.44,19.54,"Target specialist, Horizon specialist","strong on S&P 500 (38.2), weak on PAYEMS (64.2); strong on h=1 (36.9), weak on h=6 (69.5)"
-sig_kernel@B,56.7,36.65,34.51,"Target specialist, Metric-sensitive, Regime specialist","strong on CPIAUCSL (8.3), weak on S&P 500 (75.2); RMSE rank +39.2 vs MAE/median AE: occasional large misses; worse in COVID (+59.0 places vs expansion)"
-sig_kernel@Q_heisenberg_pce,56.6,39.85,32.52,"Target specialist, Metric-sensitive, Regime specialist","strong on CPIAUCSL (14.7), weak on S&P 500 (82.8); RMSE rank +27.2 vs MAE/median AE: occasional large misses; worse in COVID (+41.1 places vs expansion)"
-adaboost@Q_su_bitstring,56.5,45.5,22.69,"Horizon specialist, Metric-sensitive","strong on h=6 (31.5), weak on h=1 (60.0); RMSE rank +32.9 vs MAE/median AE: occasional large misses"
-linear_readout@Q_zz_pce,56.1,48.54,19.32,"Target specialist, Horizon specialist","strong on S&P 500 (29.4), weak on PAYEMS (64.0); strong on h=1 (39.0), weak on h=6 (60.2)"
-adaboost@Q_heisenberg_single_bit,55.9,48.48,17.94,Middle of the pack,
-xgboost@Q_su_pce,55.5,51.35,29.52,"Target specialist, Horizon specialist","strong on PAYEMS (26.2), weak on S&P 500 (69.1); strong on h=6 (33.0), weak on h=1 (74.8)"
-linear_svm@Q_su_single_bit,55.2,55.46,17.91,Regime specialist,worse in Recession (+37.5 places vs expansion)
-linear_readout@Q_zz_pauli,55.0,50.56,22.17,Target specialist,"strong on PAYEMS (36.3), weak on INDPRO (73.3)"
-sig_kernel@Q_su_pauli,54.9,40.67,34.95,"Target specialist, Metric-sensitive, Regime specialist","strong on CPIAUCSL (9.8), weak on S&P 500 (82.9); RMSE rank +33.2 vs MAE/median AE: occasional large misses; worse in COVID (+45.1 places vs expansion)"
-linear_readout@Q_heisenberg_pauli,54.7,51.25,24.58,Target specialist,"strong on S&P 500 (37.3), weak on INDPRO (82.3)"
-xgboost@Q_zz_pauli,54.5,56.02,23.28,"Target specialist, Horizon specialist","strong on PAYEMS (36.6), weak on S&P 500 (65.1); strong on h=6 (36.9), weak on h=1 (71.9)"
-random_forest@Q_zz_pce,54.2,57.31,21.94,Middle of the pack,
-linear_readout@Q_heisenberg_single_bit,54.0,51.92,20.06,"Target specialist, Horizon specialist","strong on S&P 500 (38.9), weak on INDPRO (70.3); strong on h=1 (38.9), weak on h=6 (63.4)"
-linear_readout@Q_su_pauli,53.8,56.94,22.2,Middle of the pack,
-adaboost@Q_zz_single_bit,53.7,52.1,22.38,Target specialist,"strong on S&P 500 (30.0), weak on PAYEMS (64.0)"
-lstm@Q_su_pauli,53.3,51.85,28.91,"Target specialist, Horizon specialist","strong on INDPRO (29.8), weak on PAYEMS (84.8); strong on h=1 (36.4), weak on h=6 (66.6)"
-sig_kernel@Q_su_bitstring,53.2,43.9,34.19,"Target specialist, Metric-sensitive, Regime specialist","strong on CPIAUCSL (11.9), weak on S&P 500 (80.2); RMSE rank +34.1 vs MAE/median AE: occasional large misses; worse in COVID (+43.7 places vs expansion)"
-sig_kernel@Q_su_single_bit,53.0,46.92,32.37,Target specialist,"strong on CPIAUCSL (14.3), weak on S&P 500 (82.4)"
-adaboost@Q_heisenberg_pce,52.7,50.15,25.31,Target specialist,"strong on S&P 500 (28.1), weak on PAYEMS (81.0)"
-lstm@Q_zz_pauli,52.7,54.31,23.91,Target specialist,"strong on S&P 500 (21.4), weak on CPIAUCSL (76.9)"
-random_forest@Q_heisenberg_pce,52.6,54.58,24.63,"Target specialist, Horizon specialist","strong on S&P 500 (39.7), weak on PAYEMS (80.0); strong on h=6 (35.4), weak on h=1 (74.8)"
-linear_readout@Q_heisenberg_pce,52.2,53.58,21.33,Target specialist,"strong on S&P 500 (37.9), weak on PAYEMS (77.7)"
-lstm@Q_su_bitstring,51.7,58.85,20.75,Middle of the pack,
-random_forest@Q_zz_single_bit,51.7,59.54,19.02,Middle of the pack,
-xgboost@Q_su_pauli,51.5,64.92,24.85,Target specialist,"strong on PAYEMS (31.2), weak on INDPRO (81.3)"
-xgboost@Q_su_single_bit,51.3,66.94,21.27,Regime specialist,better in COVID (-38.8 places vs expansion)
-linear_readout@B,51.2,48.9,34.5,"Target specialist, Horizon specialist, Metric-sensitive","strong on PAYEMS (34.3), weak on INDPRO (67.0); strong on h=1 (29.8), weak on h=6 (70.8); RMSE rank +27.0 vs MAE/median AE: occasional large misses"
-gru@Q_heisenberg_single_bit,50.7,63.56,21.87,Middle of the pack,
-gru@Q_heisenberg_pce,50.0,61.83,23.97,Target specialist,"strong on S&P 500 (31.2), weak on PAYEMS (83.1)"
-lstm@Q_su_single_bit,49.9,58.5,30.45,"Target specialist, Metric-sensitive","strong on INDPRO (21.9), weak on PAYEMS (81.4); RMSE rank -26.2 vs MAE/median AE: avoids large misses, weaker typical month"
-lstm@Q_zz_single_bit,49.7,58.1,28.5,Target specialist,"strong on S&P 500 (31.0), weak on CPIAUCSL (83.8)"
-linear_svm@Q_zz_pce,49.2,66.79,12.87,Middle of the pack,
-lstm@Q_heisenberg_pce,49.1,59.81,27.46,"Target specialist, Metric-sensitive","strong on S&P 500 (28.2), weak on PAYEMS (88.3); RMSE rank -25.7 vs MAE/median AE: avoids large misses, weaker typical month"
-xgboost@Q_heisenberg_pauli,49.1,63.02,25.39,Middle of the pack,
-rnn@Q_su_single_bit,48.8,60.25,33.05,Target specialist,"strong on CPIAUCSL (20.3), weak on PAYEMS (98.5)"
-lstm@Q_zz_pce,48.6,60.75,27.13,Middle of the pack,
-xgboost@Q_su_bitstring,48.0,68.77,22.66,Middle of the pack,
-decision_tree@A,46.6,57.56,42.08,"Target specialist, Horizon specialist, Regime specialist","strong on CPIAUCSL (34.8), weak on S&P 500 (82.4); strong on h=6 (20.3), weak on h=1 (90.2); better in Recession (-40.2 places vs expansion)"
-linear_svm@Q_heisenberg_pce,46.3,69.73,17.99,Middle of the pack,
-rnn@Q_heisenberg_pauli,45.7,74.33,19.89,Regime specialist,better in COVID (-47.2 places vs expansion)
-linear_svm@B,45.3,58.83,37.38,Target specialist,"strong on PAYEMS (24.2), weak on S&P 500 (91.6)"
-linear_svm@Q_heisenberg_single_bit,45.3,70.98,21.94,Regime specialist,better in COVID (-40.2 places vs expansion)
-gru@Q_zz_single_bit,44.9,70.31,20.49,Middle of the pack,
-gru@Q_su_single_bit,43.8,74.52,24.84,Metric-sensitive,"RMSE rank -29.5 vs MAE/median AE: avoids large misses, weaker typical month"
-linear_readout@Q_su_bitstring,43.3,67.77,27.0,Middle of the pack,
-xgboost@Q_zz_pce,43.0,79.15,19.27,Consistently weak,
-xgboost@Q_heisenberg_single_bit,42.3,75.65,18.2,Middle of the pack,
-rnn@Q_heisenberg_single_bit,42.1,80.17,16.0,Consistently weak,
-linear_svm@Q_zz_single_bit,41.9,74.85,15.74,Middle of the pack,
-gru@Q_heisenberg_pauli,41.6,73.21,31.04,Target specialist,"strong on S&P 500 (26.1), weak on INDPRO (91.4)"
-rnn@Q_zz_pauli,41.4,84.69,14.2,"Consistently weak, Regime specialist",better in COVID (-41.5 places vs expansion)
-gru@Q_su_pauli,40.8,80.29,22.74,Metric-sensitive,"RMSE rank -31.1 vs MAE/median AE: avoids large misses, weaker typical month"
-rnn@Q_heisenberg_pce,40.2,81.79,20.68,Consistently weak,
-sig_kernel@Q_su_pce,39.6,63.94,43.74,"Target specialist, Metric-sensitive","strong on CPIAUCSL (15.0), weak on INDPRO (111.2); RMSE rank +23.5 vs MAE/median AE: occasional large misses"
-rnn@Q_zz_pce,39.5,80.62,19.32,Consistently weak,
-decision_tree@B,39.5,75.52,33.42,"Target specialist, Regime specialist","strong on PAYEMS (39.2), weak on CPIAUCSL (97.8); better in Recession (-54.2 places vs expansion)"
-gru@Q_zz_pce,39.1,80.85,24.53,Middle of the pack,
-rnn@Q_su_pauli,38.9,88.56,17.64,"Consistently weak, Regime specialist",better in COVID (-47.6 places vs expansion)
-xgboost@Q_heisenberg_pce,38.8,83.48,16.99,Consistently weak,
-AR6,38.2,61.48,44.66,"Target specialist, Metric-sensitive, Regime specialist","strong on CPIAUCSL (7.7), weak on PAYEMS (88.4); RMSE rank +26.0 vs MAE/median AE: occasional large misses; worse in COVID (+74.5 places vs expansion)"
-gru@Q_zz_pauli,38.2,79.65,25.54,Middle of the pack,
-linear_svm@Q_su_pauli,38.2,86.75,18.97,"Consistently weak, Regime specialist",better in COVID (-58.0 places vs expansion)
-arima,37.8,63.38,45.15,"Target specialist, Metric-sensitive, Regime specialist","strong on CPIAUCSL (14.2), weak on S&P 500 (93.0); RMSE rank +27.1 vs MAE/median AE: occasional large misses; worse in COVID (+38.2 places vs expansion)"
-xgboost@Q_zz_single_bit,37.4,89.44,12.52,Consistently weak,
-gru@Q_su_bitstring,36.5,88.4,16.21,Consistently weak,
-rnn@Q_zz_single_bit,36.1,83.4,19.4,Consistently weak,
-rnn@Q_su_bitstring,35.1,88.25,16.27,Consistently weak,
-decision_tree@Q_su_single_bit,35.0,98.12,15.44,"Consistently weak, Regime specialist",better in COVID (-68.3 places vs expansion)
-decision_tree@Q_su_pce,34.9,85.0,28.94,Regime specialist,better in Recession (-36.0 places vs expansion)
-random_walk,34.0,68.02,47.32,"Target specialist, Metric-sensitive","strong on CPIAUCSL (16.2), weak on S&P 500 (113.7); RMSE rank +29.5 vs MAE/median AE: occasional large misses"
-decision_tree@Q_su_pauli,33.3,94.42,25.4,Regime specialist,better in COVID (-64.2 places vs expansion)
-linear_svm@Q_heisenberg_pauli,31.4,94.21,27.33,Regime specialist,better in COVID (-51.0 places vs expansion)
-decision_tree@Q_zz_pce,30.0,105.56,8.87,"Consistently weak, Regime specialist",better in COVID (-55.0 places vs expansion)
-decision_tree@Q_heisenberg_pce,28.9,107.25,5.56,"Consistently weak, Regime specialist",better in Recession (-36.9 places vs expansion)
-decision_tree@Q_zz_pauli,28.9,99.98,22.31,Regime specialist,better in COVID (-46.2 places vs expansion)
-decision_tree@Q_su_bitstring,27.8,104.19,11.7,"Consistently weak, Regime specialist",better in COVID (-41.5 places vs expansion)
-decision_tree@Q_heisenberg_pauli,26.5,106.77,11.32,"Consistently weak, Regime specialist",better in COVID (-42.0 places vs expansion)
-linear_svm@Q_zz_pauli,26.5,96.08,28.94,Regime specialist,better in COVID (-37.0 places vs expansion)
-decision_tree@Q_heisenberg_single_bit,25.5,105.21,11.46,Consistently weak,
-decision_tree@Q_zz_single_bit,24.0,111.94,6.09,"Consistently weak, Regime specialist",better in COVID (-38.6 places vs expansion)
-linear_svm@Q_su_bitstring,17.6,112.54,8.1,Consistently weak,
+lstm@MCR_su_z,79.9,19.23,17.68,Consistently strong,
+lstm@B,77.1,23.98,20.63,Consistently strong,
+gru@MCR_su_z,74.9,28.17,14.47,Consistently strong,
+random_forest@B,74.1,27.71,20.91,Consistently strong,
+gru@B,74.1,27.96,21.2,Consistently strong,
+linear_readout@Q_su_pce,73.4,29.0,14.29,Consistently strong,
+linear_readout@MCR_su_z,72.8,32.06,18.99,Consistently strong,
+random_forest@A,72.6,21.75,25.39,"Consistently strong, Regime specialist",worse in COVID (+74.7 places vs expansion)
+sig_kernel@Q_zz_pauli,72.3,23.35,25.55,"Metric-sensitive, Regime specialist",RMSE rank +32.0 vs MAE/median AE: occasional large misses; worse in COVID (+52.1 places vs expansion)
+sig_kernel@Q_zz_single_bit,71.9,26.81,25.76,Regime specialist,worse in COVID (+45.7 places vs expansion)
+gru@Q_su_pce,71.7,31.75,18.86,Consistently strong,
+sig_kernel@A,71.4,24.21,27.8,Regime specialist,worse in COVID (+56.4 places vs expansion)
+random_forest@MCR_su_z,70.7,36.02,16.43,Consistently strong,
+lstm@Q_su_pce,69.6,30.31,24.65,"Consistently strong, Regime specialist",worse in COVID (+44.3 places vs expansion)
+sig_kernel@Q_heisenberg_pauli,68.1,27.88,30.58,"Metric-sensitive, Regime specialist",RMSE rank +36.8 vs MAE/median AE: occasional large misses; worse in COVID (+57.1 places vs expansion)
+rnn@B,66.7,39.33,28.03,Middle of the pack,
+sig_kernel@Q_zz_pce,66.2,32.0,32.37,Target specialist,"strong on CPIAUCSL (10.2), weak on S&P 500 (81.2)"
+lstm@Q_heisenberg_single_bit,65.8,38.73,26.29,Middle of the pack,
+sig_kernel@MCR_su_z,64.7,31.94,33.72,"Target specialist, Metric-sensitive, Regime specialist","strong on CPIAUCSL (6.8), weak on S&P 500 (71.2); RMSE rank +29.9 vs MAE/median AE: occasional large misses; worse in COVID (+51.9 places vs expansion)"
+lstm@A,64.0,47.67,25.45,"Target specialist, Metric-sensitive","strong on INDPRO (37.2), weak on PAYEMS (67.8); RMSE rank -36.9 vs MAE/median AE: avoids large misses, weaker typical month"
+linear_svm@MCR_su_z,64.0,49.79,27.52,Target specialist,"strong on INDPRO (29.5), weak on S&P 500 (83.3)"
+adaboost@Q_zz_pauli,63.6,40.56,22.25,"Consistently strong, Regime specialist",worse in Recession (+41.3 places vs expansion)
+linear_svm@Q_su_pce,63.5,44.29,24.81,Consistently strong,
+random_forest@Q_zz_pauli,63.4,44.48,16.23,Consistently strong,
+random_forest@Q_heisenberg_pauli,63.1,46.9,14.67,Middle of the pack,
+adaboost@Q_heisenberg_pauli,62.8,42.73,18.24,"Consistently strong, Regime specialist",worse in Recession (+47.6 places vs expansion)
+linear_readout@Q_su_single_bit,62.4,50.1,19.88,Target specialist,"strong on S&P 500 (29.4), weak on PAYEMS (67.9)"
+lstm@Q_heisenberg_pauli,62.4,44.69,27.36,Target specialist,"strong on S&P 500 (6.9), weak on CPIAUCSL (68.5)"
+adaboost@MCR_su_z,62.1,45.19,27.3,Middle of the pack,
+sig_kernel@Q_heisenberg_single_bit,62.1,34.71,36.64,"Metric-sensitive, Regime specialist",RMSE rank +41.4 vs MAE/median AE: occasional large misses; worse in COVID (+50.4 places vs expansion)
+linear_readout@Q_zz_single_bit,61.4,42.48,20.84,"Consistently strong, Regime specialist",worse in Recession (+49.6 places vs expansion)
+sig_kernel@B,61.3,34.81,37.34,"Target specialist, Metric-sensitive, Regime specialist","strong on CPIAUCSL (7.4), weak on S&P 500 (73.0); RMSE rank +43.2 vs MAE/median AE: occasional large misses; worse in COVID (+65.0 places vs expansion)"
+gru@A,61.1,50.69,27.8,Target specialist,"strong on INDPRO (23.4), weak on S&P 500 (69.4)"
+linear_readout@Q_zz_pce,60.9,46.0,21.76,Middle of the pack,
+linear_readout@Q_zz_pauli,60.9,48.04,22.55,Target specialist,"strong on S&P 500 (29.0), weak on INDPRO (72.5)"
+sig_kernel@Q_heisenberg_pce,60.8,38.46,35.31,"Target specialist, Metric-sensitive, Regime specialist","strong on CPIAUCSL (14.9), weak on S&P 500 (82.5); RMSE rank +29.8 vs MAE/median AE: occasional large misses; worse in COVID (+47.0 places vs expansion)"
+linear_svm@Q_su_single_bit,60.5,53.25,16.92,"Target specialist, Regime specialist","strong on S&P 500 (43.3), weak on PAYEMS (68.1); worse in Recession (+46.6 places vs expansion)"
+linear_readout@Q_heisenberg_pauli,60.0,49.15,27.15,Target specialist,"strong on S&P 500 (28.3), weak on INDPRO (86.3)"
+rnn@Q_su_pce,59.9,50.52,26.9,Target specialist,"strong on S&P 500 (37.2), weak on CPIAUCSL (87.1)"
+linear_readout@Q_heisenberg_single_bit,59.6,49.92,20.44,Target specialist,"strong on S&P 500 (30.5), weak on INDPRO (72.5)"
+sig_kernel@Q_su_pauli,59.5,39.54,36.87,"Target specialist, Metric-sensitive, Regime specialist","strong on CPIAUCSL (9.1), weak on S&P 500 (84.2); RMSE rank +38.2 vs MAE/median AE: occasional large misses; worse in COVID (+50.2 places vs expansion)"
+linear_readout@Q_su_pauli,58.5,56.17,24.86,Target specialist,"strong on S&P 500 (34.3), weak on PAYEMS (77.5)"
+sig_kernel@Q_su_bitstring,58.2,42.96,35.53,"Target specialist, Metric-sensitive, Regime specialist","strong on CPIAUCSL (11.4), weak on S&P 500 (79.7); RMSE rank +38.1 vs MAE/median AE: occasional large misses; worse in COVID (+48.4 places vs expansion)"
+linear_readout@A,58.1,38.31,41.49,"Metric-sensitive, Regime specialist",RMSE rank +40.9 vs MAE/median AE: occasional large misses; worse in COVID (+76.9 places vs expansion)
+sig_kernel@Q_su_single_bit,57.7,46.46,34.43,Target specialist,"strong on CPIAUCSL (14.7), weak on S&P 500 (82.0)"
+lstm@Q_su_pauli,57.6,51.5,32.54,Target specialist,"strong on INDPRO (27.2), weak on PAYEMS (93.2)"
+adaboost@Q_su_pce,56.9,52.94,23.89,Target specialist,"strong on PAYEMS (40.3), weak on INDPRO (68.8)"
+linear_readout@Q_heisenberg_pce,56.9,51.79,25.59,Target specialist,"strong on S&P 500 (28.5), weak on PAYEMS (84.9)"
+random_forest@Q_su_pauli,56.5,62.81,18.98,Middle of the pack,
+lstm@Q_zz_pauli,55.8,53.92,29.95,Target specialist,"strong on S&P 500 (13.1), weak on CPIAUCSL (82.1)"
+adaboost@B,55.6,50.88,36.43,"Horizon specialist, Metric-sensitive","strong on h=1 (26.8), weak on h=6 (72.9); RMSE rank +35.2 vs MAE/median AE: occasional large misses"
+random_forest@Q_su_pce,55.6,56.08,26.93,Target specialist,"strong on PAYEMS (25.1), weak on INDPRO (71.9)"
+linear_readout@B,55.5,49.06,37.04,"Target specialist, Horizon specialist, Metric-sensitive","strong on PAYEMS (34.5), weak on INDPRO (71.4); strong on h=1 (36.4), weak on h=6 (67.7); RMSE rank +31.3 vs MAE/median AE: occasional large misses"
+rnn@MCR_su_z,55.2,55.67,29.87,Target specialist,"strong on S&P 500 (29.1), weak on CPIAUCSL (88.5)"
+adaboost@Q_su_pauli,55.2,61.85,26.44,Horizon specialist,"strong on h=1 (41.0), weak on h=6 (87.9)"
+lstm@Q_su_bitstring,54.4,58.81,28.01,Target specialist,"strong on S&P 500 (34.6), weak on PAYEMS (89.0)"
+gru@Q_heisenberg_single_bit,53.7,65.06,26.96,Target specialist,"strong on INDPRO (42.2), weak on CPIAUCSL (93.1)"
+adaboost@A,53.6,43.1,42.8,"Target specialist, Metric-sensitive, Regime specialist","strong on CPIAUCSL (16.1), weak on S&P 500 (67.4); RMSE rank +52.1 vs MAE/median AE: occasional large misses; worse in COVID (+79.7 places vs expansion)"
+lstm@Q_su_single_bit,53.4,60.9,33.63,"Target specialist, Metric-sensitive","strong on INDPRO (21.8), weak on PAYEMS (89.3); RMSE rank -30.4 vs MAE/median AE: avoids large misses, weaker typical month"
+rnn@Q_su_single_bit,52.9,62.71,35.59,Target specialist,"strong on CPIAUCSL (21.8), weak on PAYEMS (109.1)"
+random_forest@Q_heisenberg_single_bit,52.8,62.79,16.59,Middle of the pack,
+gru@Q_heisenberg_pce,52.7,62.71,31.79,Target specialist,"strong on S&P 500 (21.9), weak on PAYEMS (91.3)"
+lstm@Q_heisenberg_pce,52.3,61.31,32.62,"Target specialist, Metric-sensitive","strong on S&P 500 (22.0), weak on PAYEMS (97.0); RMSE rank -29.8 vs MAE/median AE: avoids large misses, weaker typical month"
+xgboost@A,52.3,50.88,40.81,"Target specialist, Metric-sensitive, Regime specialist","strong on CPIAUCSL (13.4), weak on S&P 500 (96.2); RMSE rank +26.4 vs MAE/median AE: occasional large misses; worse in COVID (+54.5 places vs expansion)"
+linear_svm@Q_zz_pce,52.3,67.96,16.37,Middle of the pack,
+adaboost@Q_su_single_bit,52.3,69.4,22.53,Middle of the pack,
+lstm@Q_zz_single_bit,52.1,59.58,36.3,Target specialist,"strong on S&P 500 (21.8), weak on CPIAUCSL (93.1)"
+lstm@Q_zz_pce,51.8,62.65,31.17,Target specialist,"strong on S&P 500 (39.2), weak on PAYEMS (87.2)"
+rnn@A,51.7,82.96,28.59,"Metric-sensitive, Regime specialist","RMSE rank -30.0 vs MAE/median AE: avoids large misses, weaker typical month; better in Recession (-74.6 places vs expansion); better in COVID (-78.4 places vs expansion)"
+random_forest@Q_su_bitstring,51.7,71.88,20.1,Middle of the pack,
+adaboost@Q_zz_single_bit,51.6,61.88,27.46,Target specialist,"strong on S&P 500 (33.9), weak on CPIAUCSL (77.3)"
+adaboost@Q_zz_pce,51.1,70.62,16.66,Middle of the pack,
+linear_svm@Q_heisenberg_pce,50.4,71.52,19.18,Middle of the pack,
+adaboost@Q_heisenberg_single_bit,50.2,63.62,20.46,Middle of the pack,
+xgboost@B,50.0,66.83,35.38,"Target specialist, Regime specialist","strong on CPIAUCSL (42.5), weak on S&P 500 (94.3); better in Recession (-55.0 places vs expansion)"
+random_forest@Q_zz_single_bit,49.2,69.08,22.16,Middle of the pack,
+random_forest@Q_su_single_bit,49.2,75.92,24.37,Target specialist,"strong on CPIAUCSL (42.8), weak on INDPRO (94.8)"
+xgboost@MCR_su_z,48.9,72.54,25.49,Middle of the pack,
+linear_svm@Q_heisenberg_single_bit,48.6,74.08,24.56,"Target specialist, Regime specialist","strong on PAYEMS (43.8), weak on INDPRO (88.8); better in COVID (-43.7 places vs expansion)"
+random_forest@Q_zz_pce,48.2,76.17,17.73,Middle of the pack,
+gru@Q_zz_single_bit,48.1,72.81,25.61,Middle of the pack,
+rnn@Q_heisenberg_pauli,48.0,77.04,26.98,Regime specialist,better in COVID (-53.4 places vs expansion)
+linear_svm@B,48.0,62.65,41.72,Target specialist,"strong on PAYEMS (22.6), weak on S&P 500 (101.1)"
+adaboost@Q_heisenberg_pce,47.7,65.38,29.21,Target specialist,"strong on S&P 500 (31.2), weak on PAYEMS (101.4)"
+linear_readout@Q_su_bitstring,47.3,69.4,30.41,Middle of the pack,
+gru@Q_su_single_bit,47.2,79.27,27.32,Metric-sensitive,"RMSE rank -35.4 vs MAE/median AE: avoids large misses, weaker typical month"
+adaboost@Q_su_bitstring,45.6,71.85,23.04,Metric-sensitive,RMSE rank +34.3 vs MAE/median AE: occasional large misses
+xgboost@Q_su_pce,45.6,74.83,31.29,Target specialist,"strong on PAYEMS (30.7), weak on INDPRO (92.2)"
+random_forest@Q_heisenberg_pce,45.5,76.46,23.23,Middle of the pack,
+linear_svm@Q_zz_single_bit,44.8,78.25,19.01,Middle of the pack,
+rnn@Q_heisenberg_single_bit,44.3,84.31,21.61,Middle of the pack,
+xgboost@Q_zz_pauli,43.8,82.6,22.32,Middle of the pack,
+gru@Q_heisenberg_pauli,43.7,78.08,38.11,Target specialist,"strong on S&P 500 (21.0), weak on INDPRO (97.7)"
+rnn@Q_zz_pauli,43.3,88.67,22.24,Regime specialist,better in COVID (-46.5 places vs expansion)
+gru@Q_su_pauli,43.1,86.04,26.97,Metric-sensitive,"RMSE rank -37.8 vs MAE/median AE: avoids large misses, weaker typical month"
+sig_kernel@Q_su_pce,43.0,67.79,49.62,"Target specialist, Metric-sensitive","strong on CPIAUCSL (15.3), weak on INDPRO (124.8); RMSE rank +27.0 vs MAE/median AE: occasional large misses"
+rnn@Q_heisenberg_pce,42.0,86.15,29.18,Middle of the pack,
+gru@Q_zz_pce,41.8,85.9,29.12,Middle of the pack,
+rnn@Q_zz_pce,41.8,85.0,25.49,Middle of the pack,
+xgboost@Q_su_single_bit,41.7,95.23,17.89,"Consistently weak, Regime specialist",better in COVID (-52.5 places vs expansion)
+rnn@Q_su_pauli,41.7,96.0,19.42,"Consistently weak, Regime specialist",better in COVID (-56.9 places vs expansion)
+xgboost@Q_heisenberg_pauli,41.5,89.67,18.82,Consistently weak,
+AR6,41.0,65.17,50.08,"Target specialist, Metric-sensitive, Regime specialist","strong on CPIAUCSL (6.5), weak on PAYEMS (99.6); RMSE rank +30.9 vs MAE/median AE: occasional large misses; worse in COVID (+90.5 places vs expansion)"
+gru@Q_zz_pauli,40.3,84.06,33.83,Target specialist,"strong on S&P 500 (30.8), weak on CPIAUCSL (108.2)"
+linear_svm@Q_su_pauli,40.0,92.6,24.48,"Consistently weak, Regime specialist",better in COVID (-65.7 places vs expansion)
+arima,39.6,69.02,51.58,"Target specialist, Metric-sensitive, Regime specialist","strong on CPIAUCSL (13.9), weak on S&P 500 (104.2); RMSE rank +34.1 vs MAE/median AE: occasional large misses; worse in COVID (+43.1 places vs expansion)"
+xgboost@Q_su_bitstring,39.4,96.4,16.89,"Consistently weak, Regime specialist",better in COVID (-47.0 places vs expansion)
+xgboost@Q_su_pauli,39.3,96.94,21.43,Consistently weak,
+gru@Q_su_bitstring,38.5,95.1,20.33,Consistently weak,
+rnn@Q_zz_single_bit,38.1,88.27,25.84,Middle of the pack,
+rnn@Q_su_bitstring,37.6,94.4,20.06,Consistently weak,
+xgboost@Q_zz_pce,37.4,100.56,11.82,Consistently weak,
+xgboost@Q_heisenberg_single_bit,36.3,98.21,13.71,Consistently weak,
+random_walk,36.1,73.83,54.33,"Target specialist, Metric-sensitive","strong on CPIAUCSL (16.8), weak on S&P 500 (127.2); RMSE rank +36.0 vs MAE/median AE: occasional large misses"
+xgboost@Q_zz_single_bit,35.3,103.52,12.58,Consistently weak,
+xgboost@Q_heisenberg_pce,34.1,104.88,12.26,Consistently weak,
+linear_svm@Q_heisenberg_pauli,33.5,103.17,32.11,Regime specialist,better in COVID (-61.4 places vs expansion)
+decision_tree@Q_su_pce,32.8,101.04,29.59,Middle of the pack,
+decision_tree@Q_su_single_bit,31.7,117.62,12.49,"Consistently weak, Regime specialist",better in COVID (-76.9 places vs expansion)
+decision_tree@MCR_su_z,31.0,113.52,12.75,"Consistently weak, Regime specialist",better in COVID (-40.8 places vs expansion)
+decision_tree@B,30.8,106.35,29.28,Regime specialist,better in Recession (-55.4 places vs expansion)
+decision_tree@A,30.4,96.08,39.49,Regime specialist,better in Recession (-47.2 places vs expansion)
+decision_tree@Q_su_pauli,28.4,116.54,18.28,"Consistently weak, Regime specialist",better in COVID (-60.6 places vs expansion)
+linear_svm@Q_zz_pauli,28.3,105.62,33.87,Regime specialist,better in COVID (-43.1 places vs expansion)
+decision_tree@Q_zz_pauli,26.6,116.83,19.46,"Consistently weak, Regime specialist",better in COVID (-42.6 places vs expansion)
+decision_tree@Q_zz_pce,26.6,121.58,7.51,"Consistently weak, Regime specialist",better in COVID (-51.0 places vs expansion)
+decision_tree@Q_su_bitstring,25.8,123.5,7.11,"Consistently weak, Regime specialist",better in COVID (-49.2 places vs expansion)
+decision_tree@Q_heisenberg_pce,25.7,123.46,5.63,Consistently weak,
+decision_tree@Q_heisenberg_pauli,24.9,122.5,9.27,"Consistently weak, Regime specialist",better in COVID (-43.1 places vs expansion)
+decision_tree@Q_heisenberg_single_bit,24.0,121.06,10.54,Consistently weak,
+decision_tree@Q_zz_single_bit,23.8,125.96,6.88,"Consistently weak, Regime specialist",better in COVID (-46.8 places vs expansion)
+linear_svm@A,17.9,132.12,2.38,Consistently weak,
+linear_svm@Q_su_bitstring,17.6,126.19,9.35,Consistently weak,

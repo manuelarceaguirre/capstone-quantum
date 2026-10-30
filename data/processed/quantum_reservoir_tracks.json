@@ -1,5 +1,5 @@
 {
-  "built_at": "2026-10-28T00:33:25.352473+00:00",
+  "built_at": "2026-10-30T14:57:02.439861+00:00",
   "input": "track_b_{target}.parquet",
   "scaling": "causal min-max (expanding)",
   "settings": {
@@ -28,7 +28,7 @@
       "hidden": 10,
       "status": "built",
       "features": 10,
-      "seconds": 155.9
+      "seconds": 125.0
     },
     {
       "track": "MCR_su_z",
@@ -40,7 +40,7 @@
       "hidden": 10,
       "status": "built",
       "features": 10,
-      "seconds": 144.0
+      "seconds": 156.2
     },
     {
       "track": "MCR_su_z",
@@ -52,7 +52,7 @@
       "hidden": 12,
       "status": "built",
       "features": 12,
-      "seconds": 165.6
+      "seconds": 158.6
     },
     {
       "track": "MCR_su_z",
@@ -64,7 +64,7 @@
       "hidden": 12,
       "status": "built",
       "features": 12,
-      "seconds": 166.1
+      "seconds": 163.1
     }
   ]
 }
